@@ -1,1 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MegaHQ Online - Leitor</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #111;
+            font-family: Arial, sans-serif;
+        }
+
+        #carregando {
+            color: white;
+            font-size: 18px;
+            text-align: center;
+            padding: 30px;
+        }
+
+        #leitor {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 20px 0;
+        }
+
+        .pagina {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="carregando">
+        Carregando HQ...
+    </div>
+
+    <div id="leitor"></div>
+
+    <script type="module">
+
+        import * as pdfjsLib from
+        "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.mjs";
+
+        pdfjsLib.GlobalWorkerOptions.workerSrc =
+        "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.3.289/build/pdf.worker.mjs";
+
+
+        const pdfUrl =
+        "https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf";
+
+
+        const leitor = document.getElementById("leitor");
+
+        const carregando =
+        document.getElementById("carregando");
+
+
+        async function carregarPDF() {
+
+            try {
+
+                const pdf =
+                await pdfjsLib.getDocument(pdfUrl).promise;
+
+
+                carregando.style.display = "none";
+
+
+                for (
+                    let numero = 1;
+                    numero <= pdf.numPages;
+                    numero++
+                ) {
+
+                    const pagina =
+                    await pdf.getPage(numero);
+
+
+                    const escala = 1.5;
+
+
+                    const viewport =
+                    pagina.getViewport({
+                        scale: escala
+                    });
+
+
+                    const canvas =
+                    document.createElement("canvas");
+
+
+                    canvas.className = "pagina";
+
+
+                    const contexto =
+                    canvas.getContext("2d");
+
+
+                    canvas.width =
+                    viewport.width;
+
+
+                    canvas.height =
+                    viewport.height;
+
+
+                    leitor.appendChild(canvas);
+
+
+                    await pagina.render({
+                        canvasContext: contexto,
+                        viewport: viewport
+                    }).promise;
+
+                }
+
+            } catch (erro) {
+
+                carregando.innerText =
+                "Erro ao carregar o PDF.";
+
+                console.error(erro);
+
+            }
+
+        }
+
+
+        carregarPDF();
+
+    </script>
+
+</body>
+
+</html>
