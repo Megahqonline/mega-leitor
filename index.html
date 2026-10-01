@@ -2,148 +2,877 @@
 <html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>MegaHQ Online - Leitor</title>
+<title>MegaHQ Online - Leitor</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<style>
 
-        body {
-            margin: 0;
-            background: #111;
-            font-family: Arial, sans-serif;
-        }
+* {
+    box-sizing: border-box;
+}
 
-        #carregando {
-            color: white;
-            font-size: 18px;
-            text-align: center;
-            padding: 30px;
-        }
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: #111;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+}
 
-        #leitor {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            padding: 20px 0;
-        }
+/* BARRA SUPERIOR */
 
-        .pagina {
-            display: block;
-            max-width: 100%;
-            height: auto;
-            box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
-        }
-    </style>
+#barra {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 55px;
+
+    background: #181818;
+    color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    z-index: 1000;
+
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+#barra button {
+    background: #292929;
+    color: white;
+
+    border: 1px solid #444;
+    border-radius: 5px;
+
+    padding: 7px 12px;
+
+    font-size: 14px;
+
+    cursor: pointer;
+}
+
+#barra button:hover {
+    background: #3a3a3a;
+}
+
+#paginaAtual {
+    min-width: 90px;
+    text-align: center;
+    font-size: 14px;
+}
+
+#zoomAtual {
+    min-width: 60px;
+    text-align: center;
+    font-size: 14px;
+}
+
+/* ÁREA DO LEITOR */
+
+#leitor {
+    position: absolute;
+
+    top: 55px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    overflow: auto;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+
+    padding: 20px;
+
+    gap: 20px;
+
+    scroll-behavior: auto;
+}
+
+/* PÁGINAS */
+
+.pagina-container {
+    position: relative;
+
+    display: flex;
+
+    justify-content: center;
+
+    flex-shrink: 0;
+}
+
+.pagina {
+    display: block;
+
+    background: white;
+
+    box-shadow: 0 0 15px rgba(0,0,0,0.6);
+
+    user-select: none;
+
+    -webkit-user-select: none;
+}
+
+/* CARREGAMENTO */
+
+#carregando {
+
+    position: fixed;
+
+    top: 55px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+
+    font-size: 18px;
+
+    z-index: 500;
+}
+
+/* MENSAGEM DE ERRO */
+
+#erro {
+
+    color: #ff7777;
+
+    text-align: center;
+
+    padding: 30px;
+
+    font-size: 18px;
+
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+    #barra {
+
+        height: 50px;
+
+        gap: 4px;
+
+    }
+
+    #barra button {
+
+        padding: 6px 8px;
+
+        font-size: 13px;
+
+    }
+
+    #paginaAtual {
+
+        min-width: 70px;
+
+        font-size: 12px;
+
+    }
+
+    #zoomAtual {
+
+        min-width: 45px;
+
+        font-size: 12px;
+
+    }
+
+    #leitor {
+
+        top: 50px;
+
+        padding: 10px;
+
+    }
+
+}
+
+</style>
+
 </head>
 
 <body>
 
-    <div id="carregando">
-        Carregando HQ...
-    </div>
 
-    <div id="leitor"></div>
+<!-- BARRA DE CONTROLES -->
 
-    <script type="module">
+<div id="barra">
 
-        import * as pdfjsLib from
+    <button id="paginaAnterior">
+        ◀
+    </button>
+
+    <span id="paginaAtual">
+        Página 1 / 1
+    </span>
+
+    <button id="paginaProxima">
+        ▶
+    </button>
+
+    <button id="diminuirZoom">
+        −
+    </button>
+
+    <span id="zoomAtual">
+        100%
+    </span>
+
+    <button id="aumentarZoom">
+        +
+    </button>
+
+    <button id="zoomNormal">
+        100%
+    </button>
+
+    <button id="telaCheia">
+        ⛶
+    </button>
+
+</div>
+
+
+<!-- CARREGANDO -->
+
+<div id="carregando">
+    Carregando HQ...
+</div>
+
+
+<!-- LEITOR -->
+
+<div id="leitor"></div>
+
+
+<script type="module">
+
+
+/* =====================================================
+   PDF.JS
+   ===================================================== */
+
+import * as pdfjsLib from
 "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.mjs";
+
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
 "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.mjs";
 
 
-        const pdfUrl =
-       "https://tradutormarvel5-wq.github.io/mega-leitor/";
+/* =====================================================
+   PDF
+   ===================================================== */
+
+/*
+   IMPORTANTE:
+
+   MANTENHA AQUI EXATAMENTE O LINK DO PDF
+   QUE JÁ FUNCIONOU NO SEU TESTE.
+*/
+
+const pdfUrl =
+"https://tradutormarvel5-wq.github.io/mega-leitor/";
 
 
-        const leitor = document.getElementById("leitor");
+/* =====================================================
+   ELEMENTOS
+   ===================================================== */
 
-        const carregando =
-        document.getElementById("carregando");
+const leitor =
+document.getElementById("leitor");
+
+const carregando =
+document.getElementById("carregando");
+
+const paginaAtual =
+document.getElementById("paginaAtual");
+
+const zoomAtual =
+document.getElementById("zoomAtual");
+
+const botaoAnterior =
+document.getElementById("paginaAnterior");
+
+const botaoProxima =
+document.getElementById("paginaProxima");
+
+const botaoMenos =
+document.getElementById("diminuirZoom");
+
+const botaoMais =
+document.getElementById("aumentarZoom");
+
+const botaoNormal =
+document.getElementById("zoomNormal");
+
+const botaoTelaCheia =
+document.getElementById("telaCheia");
 
 
-        async function carregarPDF() {
+/* =====================================================
+   VARIÁVEIS
+   ===================================================== */
 
-            try {
+let pdf = null;
 
-                const pdf =
-                await pdfjsLib.getDocument(pdfUrl).promise;
+let paginaAtualNumero = 1;
+
+let zoom = 1;
+
+const zoomMinimo = 0.5;
+
+const zoomMaximo = 3;
+
+const passoZoom = 0.25;
 
 
-                carregando.style.display = "none";
+/* =====================================================
+   CARREGAR PDF
+   ===================================================== */
+
+async function carregarPDF() {
+
+    try {
+
+        pdf = await pdfjsLib
+            .getDocument(pdfUrl)
+            .promise;
 
 
-                for (
-                    let numero = 1;
-                    numero <= pdf.numPages;
-                    numero++
+        carregando.style.display = "none";
+
+
+        /*
+           Renderiza todas as páginas inicialmente.
+        */
+
+        await renderizarTodasAsPaginas();
+
+
+        atualizarControles();
+
+    }
+
+    catch (erro) {
+
+        console.error(erro);
+
+        carregando.innerHTML =
+        '<div id="erro">Erro ao carregar o PDF.</div>';
+
+    }
+
+}
+
+
+/* =====================================================
+   RENDERIZAR TODAS AS PÁGINAS
+   ===================================================== */
+
+async function renderizarTodasAsPaginas() {
+
+    leitor.innerHTML = "";
+
+
+    for (
+        let numero = 1;
+        numero <= pdf.numPages;
+        numero++
+    ) {
+
+        await renderizarPagina(numero);
+
+    }
+
+}
+
+
+/* =====================================================
+   RENDERIZAR UMA PÁGINA
+   ===================================================== */
+
+async function renderizarPagina(numero) {
+
+    const pagina =
+        await pdf.getPage(numero);
+
+
+    /*
+       devicePixelRatio melhora bastante
+       a nitidez em telas de alta resolução.
+    */
+
+    const pixelRatio =
+        window.devicePixelRatio || 1;
+
+
+    const escalaFinal =
+        zoom * pixelRatio;
+
+
+    const viewport =
+        pagina.getViewport({
+            scale: escalaFinal
+        });
+
+
+    const container =
+        document.createElement("div");
+
+    container.className =
+        "pagina-container";
+
+
+    const canvas =
+        document.createElement("canvas");
+
+    canvas.className =
+        "pagina";
+
+
+    const contexto =
+        canvas.getContext("2d");
+
+
+    canvas.width =
+        viewport.width;
+
+    canvas.height =
+        viewport.height;
+
+
+    /*
+       Tamanho visual.
+    */
+
+    canvas.style.width =
+        (viewport.width / pixelRatio) + "px";
+
+    canvas.style.height =
+        (viewport.height / pixelRatio) + "px";
+
+
+    container.appendChild(canvas);
+
+    leitor.appendChild(container);
+
+
+    await pagina.render({
+
+        canvasContext: contexto,
+
+        viewport: viewport
+
+    }).promise;
+
+}
+
+
+/* =====================================================
+   ALTERAR ZOOM
+   ===================================================== */
+
+async function alterarZoom(novoZoom) {
+
+    if (novoZoom < zoomMinimo)
+        novoZoom = zoomMinimo;
+
+    if (novoZoom > zoomMaximo)
+        novoZoom = zoomMaximo;
+
+
+    zoom = novoZoom;
+
+
+    const posicaoScroll =
+        leitor.scrollTop;
+
+
+    carregando.style.display =
+        "flex";
+
+    carregando.innerText =
+        "Ajustando zoom...";
+
+
+    await renderizarTodasAsPaginas();
+
+
+    leitor.scrollTop =
+        posicaoScroll;
+
+
+    carregando.style.display =
+        "none";
+
+
+    atualizarControles();
+
+}
+
+
+/* =====================================================
+   CONTROLES
+   ===================================================== */
+
+function atualizarControles() {
+
+    paginaAtual.innerText =
+        "Página " +
+        paginaAtualNumero +
+        " / " +
+        pdf.numPages;
+
+
+    zoomAtual.innerText =
+        Math.round(zoom * 100) +
+        "%";
+
+}
+
+
+/* =====================================================
+   ZOOM +
+   ===================================================== */
+
+botaoMais.addEventListener(
+    "click",
+    function() {
+
+        alterarZoom(
+            zoom + passoZoom
+        );
+
+    }
+);
+
+
+/* =====================================================
+   ZOOM -
+   ===================================================== */
+
+botaoMenos.addEventListener(
+    "click",
+    function() {
+
+        alterarZoom(
+            zoom - passoZoom
+        );
+
+    }
+);
+
+
+/* =====================================================
+   ZOOM NORMAL
+   ===================================================== */
+
+botaoNormal.addEventListener(
+    "click",
+    function() {
+
+        alterarZoom(1);
+
+    }
+);
+
+
+/* =====================================================
+   PÁGINA ANTERIOR
+   ===================================================== */
+
+botaoAnterior.addEventListener(
+    "click",
+    function() {
+
+        if (paginaAtualNumero <= 1)
+            return;
+
+
+        paginaAtualNumero--;
+
+
+        irParaPagina(
+            paginaAtualNumero
+        );
+
+    }
+);
+
+
+/* =====================================================
+   PÁGINA PRÓXIMA
+   ===================================================== */
+
+botaoProxima.addEventListener(
+    "click",
+    function() {
+
+        if (
+            paginaAtualNumero >=
+            pdf.numPages
+        )
+            return;
+
+
+        paginaAtualNumero++;
+
+
+        irParaPagina(
+            paginaAtualNumero
+        );
+
+    }
+);
+
+
+/* =====================================================
+   IR PARA PÁGINA
+   ===================================================== */
+
+function irParaPagina(numero) {
+
+    const paginas =
+        document.querySelectorAll(
+            ".pagina-container"
+        );
+
+
+    if (!paginas[numero - 1])
+        return;
+
+
+    paginas[numero - 1]
+        .scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+
+    atualizarControles();
+
+}
+
+
+/* =====================================================
+   ATUALIZAR PÁGINA PELO SCROLL
+   ===================================================== */
+
+leitor.addEventListener(
+    "scroll",
+    function() {
+
+        const paginas =
+            document.querySelectorAll(
+                ".pagina-container"
+            );
+
+
+        let paginaMaisProxima = 1;
+
+        let menorDistancia =
+            Infinity;
+
+
+        paginas.forEach(
+            function(pagina, indice) {
+
+                const distancia =
+                    Math.abs(
+                        pagina.offsetTop -
+                        leitor.scrollTop -
+                        20
+                    );
+
+
+                if (
+                    distancia <
+                    menorDistancia
                 ) {
 
-                    const pagina =
-                    await pdf.getPage(numero);
+                    menorDistancia =
+                        distancia;
 
-
-                    const escala = 1.5;
-
-
-                    const viewport =
-                    pagina.getViewport({
-                        scale: escala
-                    });
-
-
-                    const canvas =
-                    document.createElement("canvas");
-
-
-                    canvas.className = "pagina";
-
-
-                    const contexto =
-                    canvas.getContext("2d");
-
-
-                    canvas.width =
-                    viewport.width;
-
-
-                    canvas.height =
-                    viewport.height;
-
-
-                    leitor.appendChild(canvas);
-
-
-                    await pagina.render({
-                        canvasContext: contexto,
-                        viewport: viewport
-                    }).promise;
+                    paginaMaisProxima =
+                        indice + 1;
 
                 }
 
-            } catch (erro) {
+            }
+        );
 
-                carregando.innerText =
-                "Erro ao carregar o PDF.";
 
-                console.error(erro);
+        paginaAtualNumero =
+            paginaMaisProxima;
+
+
+        atualizarControles();
+
+    }
+);
+
+
+/* =====================================================
+   ZOOM COM CTRL + RODA DO MOUSE
+   ===================================================== */
+
+leitor.addEventListener(
+    "wheel",
+    function(event) {
+
+        if (!event.ctrlKey)
+            return;
+
+
+        event.preventDefault();
+
+
+        if (event.deltaY < 0) {
+
+            alterarZoom(
+                zoom + passoZoom
+            );
+
+        }
+        else {
+
+            alterarZoom(
+                zoom - passoZoom
+            );
+
+        }
+
+    },
+    {
+        passive: false
+    }
+);
+
+
+/* =====================================================
+   TELA CHEIA
+   ===================================================== */
+
+botaoTelaCheia.addEventListener(
+    "click",
+    async function() {
+
+        try {
+
+            if (!document.fullscreenElement) {
+
+                await document.documentElement
+                    .requestFullscreen();
+
+            }
+            else {
+
+                await document.exitFullscreen();
+
+            }
+
+        }
+        catch (erro) {
+
+            console.error(erro);
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   TECLADO
+   ===================================================== */
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key === "+") {
+
+            alterarZoom(
+                zoom + passoZoom
+            );
+
+        }
+
+
+        if (event.key === "-") {
+
+            alterarZoom(
+                zoom - passoZoom
+            );
+
+        }
+
+
+        if (event.key === "ArrowLeft") {
+
+            if (paginaAtualNumero > 1) {
+
+                paginaAtualNumero--;
+
+                irParaPagina(
+                    paginaAtualNumero
+                );
 
             }
 
         }
 
 
-        carregarPDF();
+        if (event.key === "ArrowRight") {
 
-    </script>
+            if (
+                paginaAtualNumero <
+                pdf.numPages
+            ) {
+
+                paginaAtualNumero++;
+
+                irParaPagina(
+                    paginaAtualNumero
+                );
+
+            }
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   INICIAR
+   ===================================================== */
+
+carregarPDF();
+
+</script>
 
 </body>
 
