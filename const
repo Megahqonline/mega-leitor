@@ -293,7 +293,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
 */
 
 const pdfUrl =
-"./UBS%20CIDADE%20LUZ%20PREVIAS.pdf";
+"https://tradutormarvel5-wq.github.io/mega-leitor/";
 
 
 /* =====================================================
