@@ -22,177 +22,91 @@
             overflow-x: hidden;
         }
 
-
-        /* BARRA DE CONTROLES */
-
         #controles {
             position: fixed;
             top: 0;
             left: 0;
-
             width: 100%;
             height: 55px;
-
             background: #222;
-
             display: flex;
             align-items: center;
             justify-content: center;
-
             gap: 10px;
-
             z-index: 9999;
-
             color: white;
         }
-
 
         #controles button {
-
             border: none;
-
             background: #444;
             color: white;
-
             font-size: 20px;
-
             width: 40px;
             height: 36px;
-
             cursor: pointer;
-
             border-radius: 4px;
         }
-
 
         #controles button:hover {
             background: #666;
         }
 
-
         #zoomTexto {
-
             min-width: 60px;
-
             text-align: center;
-
             font-size: 15px;
         }
 
-
         #paginaTexto {
-
             margin-left: 15px;
-
             font-size: 14px;
         }
 
-
-        /* BOTÃO TELA CHEIA */
-
         #telaCheia {
-
             margin-left: 15px;
-
             font-size: 20px !important;
         }
 
-
-        /* ÁREA DO LEITOR */
-
         #areaLeitor {
-
             margin-top: 55px;
-
             width: 100vw;
-
             height: calc(100vh - 55px);
-
             overflow: auto;
-
             cursor: default;
         }
 
-
         #leitor {
-
             width: max-content;
-
             min-width: 100%;
-
             display: flex;
-
             flex-direction: column;
-
             align-items: center;
-
             gap: 10px;
-
             padding: 20px;
         }
 
-
-        /* PÁGINAS */
-
         .pagina {
-
             display: block;
-
             height: auto;
-
-            box-shadow:
-                0 0 8px rgba(0, 0, 0, 0.5);
-
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
             user-select: none;
-
             -webkit-user-drag: none;
         }
 
-
-        /* CURSOR DE ARRASTAR */
-
         #areaLeitor.podeArrastar {
-
             cursor: grab;
         }
 
-
         #areaLeitor.arrastando {
-
             cursor: grabbing;
         }
 
-
-        /* CARREGANDO */
-
         #carregando {
-
             color: white;
-
             font-size: 18px;
-
             text-align: center;
-
             padding: 30px;
-        }
-
-
-        /* MODO TELA CHEIA */
-
-        body.modoTelaCheia #controles {
-
-            position: fixed;
-
-            top: 0;
-            left: 0;
-        }
-
-
-        body.modoTelaCheia #areaLeitor {
-
-            margin-top: 55px;
-
-            height: calc(100vh - 55px);
         }
 
     </style>
@@ -203,36 +117,27 @@
 <body>
 
 
-    <!-- CONTROLES -->
-
     <div id="controles">
 
         <button id="menosZoom">
             −
         </button>
 
-
         <span id="zoomTexto">
             100%
         </span>
-
 
         <button id="maisZoom">
             +
         </button>
 
-
         <button id="zoom100">
             100%
         </button>
 
-
         <span id="paginaTexto">
             Carregando...
         </span>
-
-
-        <!-- TELA CHEIA -->
 
         <button id="telaCheia">
             ⛶
@@ -241,9 +146,6 @@
     </div>
 
 
-
-    <!-- ÁREA DE LEITURA -->
-
     <div id="areaLeitor">
 
         <div id="leitor"></div>
@@ -251,11 +153,9 @@
     </div>
 
 
-
     <div id="carregando">
         Carregando HQ...
     </div>
-
 
 
     <script type="module">
@@ -269,10 +169,32 @@
         "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.mjs";
 
 
-        /* PDF */
+        /*
+        =====================================================
+        PDF DEFINIDO PELA URL
+        =====================================================
+        */
+
+
+        const parametros =
+        new URLSearchParams(window.location.search);
+
+
+        const pdfParametro =
+        parametros.get("pdf");
+
+
+        /*
+        Se não houver ?pdf= na URL,
+        usa o PDF antigo como padrão.
+        */
+
 
         const pdfUrl =
-        "./UBS%20CIDADE%20LUZ%20PREVIAS.pdf";
+        pdfParametro
+        ? "./" + encodeURIComponent(pdfParametro).replace(/%2F/g, "/")
+        : "./UBS%20CIDADE%20LUZ%20PREVIAS.pdf";
+
 
 
         /* ELEMENTOS */
@@ -280,37 +202,30 @@
         const leitor =
         document.getElementById("leitor");
 
-
         const carregando =
         document.getElementById("carregando");
-
 
         const areaLeitor =
         document.getElementById("areaLeitor");
 
-
         const zoomTexto =
         document.getElementById("zoomTexto");
-
 
         const paginaTexto =
         document.getElementById("paginaTexto");
 
-
         const menosZoom =
         document.getElementById("menosZoom");
-
 
         const maisZoom =
         document.getElementById("maisZoom");
 
-
         const zoom100 =
         document.getElementById("zoom100");
 
-
         const telaCheia =
         document.getElementById("telaCheia");
+
 
 
         /* CONFIGURAÇÃO */
@@ -322,7 +237,6 @@
         const zoomMaximo = 3;
 
         const passoZoom = 0.25;
-
 
         let pdf = null;
 
@@ -382,7 +296,6 @@
                 numero <= pdf.numPages;
                 numero++
             ) {
-
 
                 const pagina =
                 await pdf.getPage(numero);
@@ -581,11 +494,9 @@
         let scrollInicialY = 0;
 
 
-
         areaLeitor.addEventListener(
             "mousedown",
             function (evento) {
-
 
                 if (zoom <= 1) {
                     return;
@@ -627,11 +538,9 @@
         );
 
 
-
         areaLeitor.addEventListener(
             "mousemove",
             function (evento) {
-
 
                 if (!arrastando) {
                     return;
@@ -659,11 +568,9 @@
         );
 
 
-
         document.addEventListener(
             "mouseup",
             function () {
-
 
                 if (!arrastando) {
                     return;
@@ -690,7 +597,6 @@
         );
 
 
-
         areaLeitor.addEventListener(
             "dragstart",
             function (evento) {
@@ -715,7 +621,8 @@
 
                     if (!document.fullscreenElement) {
 
-                        await document.documentElement.requestFullscreen();
+                        await document.documentElement
+                        .requestFullscreen();
 
                     }
 
@@ -740,13 +647,9 @@
         );
 
 
-
-        /* ATUALIZAR BOTÃO DE TELA CHEIA */
-
         document.addEventListener(
             "fullscreenchange",
             function () {
-
 
                 if (document.fullscreenElement) {
 
