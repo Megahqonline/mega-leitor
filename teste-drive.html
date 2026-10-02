@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Teste Google Drive</title>
+
+  <style>
+    body {
+      margin: 0;
+      background: #222;
+      font-family: Arial, sans-serif;
+      color: white;
+    }
+
+    #status {
+      padding: 20px;
+      font-size: 18px;
+    }
+
+    canvas {
+      display: block;
+      margin: 10px auto;
+      max-width: 95%;
+      background: white;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="status">Carregando PDF...</div>
+<div id="leitor"></div>
+
+<script type="module">
+
+import * as pdfjsLib from
+"https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.mjs";
+
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+"https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.mjs";
+
+
+const pdfUrl =
+"https://drive.google.com/uc?export=download&id=19iO06dHUGEwKNg4Jia9jj28JPhWIQ8lv";
+
+
+try {
+
+  const pdf = await pdfjsLib.getDocument(pdfUrl).promise;
+
+  document.getElementById("status").textContent =
+    "PDF carregado! Páginas: " + pdf.numPages;
+
+  for (let numero = 1; numero <= pdf.numPages; numero++) {
+
+    const pagina = await pdf.getPage(numero);
+
+    const viewport = pagina.getViewport({ scale: 1.5 });
+
+    const canvas = document.createElement("canvas");
+    const contexto = canvas.getContext("2d");
+
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+
+    document.getElementById("leitor").appendChild(canvas);
+
+    await pagina.render({
+      canvasContext: contexto,
+      viewport: viewport
+    }).promise;
+  }
+
+} catch (erro) {
+
+  document.getElementById("status").textContent =
+    "ERRO AO CARREGAR O PDF: " + erro.message;
+
+  console.error(erro);
+}
+
+</script>
+
+</body>
+</html>
