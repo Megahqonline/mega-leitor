@@ -19,140 +19,83 @@
             padding: 0;
             background: #111;
             font-family: Arial, sans-serif;
+            overflow-x: hidden;
         }
 
-        body {
-            overflow: hidden;
-        }
+        /* BARRA DE CONTROLES */
 
-
-        /* =========================
-           BARRA DE CONTROLES
-           ========================= */
-
-        #barra {
+        #controles {
             position: fixed;
-
             top: 0;
             left: 0;
-
             width: 100%;
             height: 55px;
 
-            background: #181818;
+            background: #222;
 
             display: flex;
             align-items: center;
             justify-content: center;
 
-            gap: 8px;
+            gap: 10px;
 
-            z-index: 1000;
-
-            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-        }
-
-
-        #barra button {
-
-            background: #292929;
+            z-index: 9999;
 
             color: white;
+        }
 
-            border: 1px solid #444;
+        #controles button {
+            border: none;
+            background: #444;
+            color: white;
 
-            border-radius: 5px;
+            font-size: 20px;
 
-            padding: 7px 12px;
-
-            font-size: 14px;
+            width: 40px;
+            height: 36px;
 
             cursor: pointer;
 
+            border-radius: 4px;
         }
 
-
-        #barra button:hover {
-
-            background: #3a3a3a;
-
+        #controles button:hover {
+            background: #666;
         }
-
 
         #zoomTexto {
-
-            color: white;
-
-            min-width: 55px;
-
+            min-width: 60px;
             text-align: center;
-
-            font-size: 14px;
-
+            font-size: 15px;
         }
-
 
         #paginaTexto {
-
-            color: white;
-
-            min-width: 90px;
-
-            text-align: center;
-
+            margin-left: 15px;
             font-size: 14px;
-
         }
 
 
-        /* =========================
-           CARREGANDO
-           ========================= */
-
-        #carregando {
-
-            position: fixed;
-
-            top: 55px;
-            left: 0;
-            right: 0;
-            bottom: 0;
-
-            display: flex;
-
-            align-items: center;
-            justify-content: center;
-
-            color: white;
-
-            font-size: 18px;
-
-            z-index: 500;
-
-        }
-
-
-        /* =========================
-           ÁREA DO LEITOR
-           ========================= */
+        /* ÁREA DO LEITOR */
 
         #areaLeitor {
 
-            position: fixed;
+            margin-top: 55px;
 
-            top: 55px;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            width: 100vw;
+            height: calc(100vh - 55px);
 
             overflow: auto;
+
+            cursor: default;
 
         }
 
 
         #leitor {
 
-            width: 100%;
+            width: max-content;
+
+            min-width: 100%;
 
             display: flex;
 
@@ -167,9 +110,7 @@
         }
 
 
-        /* =========================
-           PÁGINAS
-           ========================= */
+        /* PÁGINAS */
 
         .pagina {
 
@@ -178,62 +119,41 @@
             height: auto;
 
             box-shadow:
-                0 0 10px rgba(0,0,0,0.6);
+                0 0 8px rgba(0, 0, 0, 0.5);
 
-            background: white;
+            user-select: none;
+
+            -webkit-user-drag: none;
 
         }
 
 
-        /* =========================
-           MOBILE
-           ========================= */
+        /* CURSOR QUANDO PODE ARRASTAR */
 
-        @media (max-width: 600px) {
+        #areaLeitor.podeArrastar {
 
-            #barra {
+            cursor: grab;
 
-                height: 50px;
+        }
 
-                gap: 4px;
+        #areaLeitor.arrastando {
 
-            }
+            cursor: grabbing;
 
-            #barra button {
+        }
 
-                padding: 6px 8px;
 
-                font-size: 13px;
+        /* CARREGANDO */
 
-            }
+        #carregando {
 
-            #zoomTexto {
+            color: white;
 
-                min-width: 45px;
+            font-size: 18px;
 
-                font-size: 12px;
+            text-align: center;
 
-            }
-
-            #paginaTexto {
-
-                min-width: 70px;
-
-                font-size: 12px;
-
-            }
-
-            #areaLeitor {
-
-                top: 50px;
-
-            }
-
-            #leitor {
-
-                padding: 10px;
-
-            }
+            padding: 30px;
 
         }
 
@@ -245,51 +165,39 @@
 <body>
 
 
-    <!-- =========================
-         BARRA
-         ========================= -->
+    <!-- CONTROLES -->
 
-    <div id="barra">
+    <div id="controles">
 
-        <button id="zoomMenos">
+        <button id="menosZoom">
             −
         </button>
+
 
         <span id="zoomTexto">
             100%
         </span>
 
-        <button id="zoomMais">
+
+        <button id="maisZoom">
             +
         </button>
 
-        <button id="zoomReset">
+
+        <button id="zoom100">
             100%
         </button>
 
+
         <span id="paginaTexto">
-            Página 1
+            Carregando...
         </span>
 
-        <button id="telaCheia">
-            ⛶
-        </button>
-
     </div>
 
 
-    <!-- =========================
-         CARREGANDO
-         ========================= -->
 
-    <div id="carregando">
-        Carregando HQ...
-    </div>
-
-
-    <!-- =========================
-         ÁREA DO LEITOR
-         ========================= -->
+    <!-- ÁREA DE LEITURA -->
 
     <div id="areaLeitor">
 
@@ -298,12 +206,15 @@
     </div>
 
 
+
+    <div id="carregando">
+        Carregando HQ...
+    </div>
+
+
+
     <script type="module">
 
-
-        /* =====================================================
-           PDF.JS
-           ===================================================== */
 
         import * as pdfjsLib from
         "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.mjs";
@@ -313,28 +224,26 @@
         "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.mjs";
 
 
-        /* =====================================================
-           PDF
-           ===================================================== */
+
+        /* PDF */
 
         const pdfUrl =
         "./UBS%20CIDADE%20LUZ%20PREVIAS.pdf";
 
 
-        /* =====================================================
-           ELEMENTOS
-           ===================================================== */
+
+        /* ELEMENTOS */
 
         const leitor =
         document.getElementById("leitor");
 
 
-        const areaLeitor =
-        document.getElementById("areaLeitor");
-
-
         const carregando =
         document.getElementById("carregando");
+
+
+        const areaLeitor =
+        document.getElementById("areaLeitor");
 
 
         const zoomTexto =
@@ -345,34 +254,22 @@
         document.getElementById("paginaTexto");
 
 
-        const zoomMais =
-        document.getElementById("zoomMais");
+        const menosZoom =
+        document.getElementById("menosZoom");
 
 
-        const zoomMenos =
-        document.getElementById("zoomMenos");
+        const maisZoom =
+        document.getElementById("maisZoom");
 
 
-        const zoomReset =
-        document.getElementById("zoomReset");
+        const zoom100 =
+        document.getElementById("zoom100");
 
 
-        const telaCheia =
-        document.getElementById("telaCheia");
 
-
-        /* =====================================================
-           VARIÁVEIS
-           ===================================================== */
-
-        let pdf = null;
+        /* CONFIGURAÇÃO */
 
         let zoom = 1;
-
-        let paginaAtual = 1;
-
-        let paginas = [];
-
 
         const zoomMinimo = 0.5;
 
@@ -381,18 +278,15 @@
         const passoZoom = 0.25;
 
 
-        /* =====================================================
-           CARREGAR PDF
-           ===================================================== */
+        let pdf = null;
+
+
+
+        /* CARREGAR PDF */
 
         async function carregarPDF() {
 
             try {
-
-                /*
-                 * Mantemos exatamente o mesmo carregamento
-                 * que já estava funcionando.
-                 */
 
                 pdf =
                 await pdfjsLib
@@ -400,54 +294,43 @@
                 .promise;
 
 
-                carregando.style.display =
-                "none";
+                carregando.style.display = "none";
 
 
-                /*
-                 * Primeiro carregamento.
-                 */
-
-                await renderizarPDF();
+                paginaTexto.innerText =
+                "Página 1 / " + pdf.numPages;
 
 
-                atualizarPagina();
+                await renderizarPaginas();
+
+
+                atualizarInterface();
+
 
             }
 
             catch (erro) {
 
-                console.error(
-                    "Erro PDF:",
-                    erro
-                );
-
                 carregando.innerText =
                 "Erro ao carregar o PDF.";
+
+                console.error(erro);
 
             }
 
         }
 
 
-        /* =====================================================
-           RENDERIZAR PDF
-           ===================================================== */
 
-        async function renderizarPDF() {
+        /* RENDERIZAR TODAS AS PÁGINAS */
+
+        async function renderizarPaginas() {
+
 
             leitor.innerHTML = "";
 
-            paginas = [];
 
-
-            /*
-             * Usamos o pixelRatio da tela para
-             * melhorar a nitidez.
-             */
-
-            const pixelRatio =
-            window.devicePixelRatio || 1;
+            const escalaBase = 1.5;
 
 
             for (
@@ -456,20 +339,13 @@
                 numero++
             ) {
 
+
                 const pagina =
                 await pdf.getPage(numero);
 
 
-                /*
-                 * Escala da página.
-
-                 * zoom = 1 → tamanho normal
-                 * zoom = 2 → dobro
-                 * zoom = 3 → triplo
-                 */
-
                 const escala =
-                1.5 * zoom * pixelRatio;
+                escalaBase * zoom;
 
 
                 const viewport =
@@ -487,14 +363,8 @@
 
 
                 const contexto =
-                canvas.getContext(
-                    "2d"
-                );
+                canvas.getContext("2d");
 
-
-                /*
-                 * Resolução interna do canvas.
-                 */
 
                 canvas.width =
                 viewport.width;
@@ -504,27 +374,18 @@
                 viewport.height;
 
 
-                /*
-                 * Tamanho visual.
-
-                 * Isso impede que o canvas fique
-                 * maior que a tela quando o zoom
-                 * estiver em 100%.
-                 */
+                /* IMPORTANTE:
+                   NÃO limitar a largura da página */
 
                 canvas.style.width =
-                (viewport.width / pixelRatio)
-                + "px";
+                viewport.width + "px";
 
 
                 canvas.style.height =
-                (viewport.height / pixelRatio)
-                + "px";
+                viewport.height + "px";
 
 
-                leitor.appendChild(
-                    canvas
-                );
+                leitor.appendChild(canvas);
 
 
                 await pagina.render({
@@ -537,375 +398,259 @@
 
                 }).promise;
 
-
-                paginas.push(canvas);
-
             }
+
+
+            atualizarInterface();
 
         }
 
 
-        /* =====================================================
-           ATUALIZAR ZOOM
-           ===================================================== */
 
-        async function alterarZoom(novoZoom) {
+        /* ATUALIZAR INTERFACE */
 
-            if (
-                novoZoom <
-                zoomMinimo
-            ) {
-
-                novoZoom =
-                zoomMinimo;
-
-            }
-
-
-            if (
-                novoZoom >
-                zoomMaximo
-            ) {
-
-                novoZoom =
-                zoomMaximo;
-
-            }
-
-
-            zoom =
-            novoZoom;
-
-
-            const paginaSalva =
-            paginaAtual;
-
-
-            /*
-             * Mantém a página atual
-             * durante o novo render.
-             */
-
-            carregando.style.display =
-            "flex";
-
-
-            carregando.innerText =
-            "Ajustando zoom...";
-
-
-            await renderizarPDF();
-
-
-            carregando.style.display =
-            "none";
-
-
-            atualizarZoomTexto();
-
-
-            /*
-             * Volta para a página
-             * que estava sendo visualizada.
-             */
-
-            setTimeout(
-                function() {
-
-                    if (
-                        paginas[
-                            paginaSalva - 1
-                        ]
-                    ) {
-
-                        paginas[
-                            paginaSalva - 1
-                        ].scrollIntoView({
-                            behavior: "instant",
-                            block: "start"
-                        });
-
-                    }
-
-                },
-                50
-            );
-
-        }
-
-
-        /* =====================================================
-           TEXTO DO ZOOM
-           ===================================================== */
-
-        function atualizarZoomTexto() {
+        function atualizarInterface() {
 
             zoomTexto.innerText =
-            Math.round(
-                zoom * 100
-            ) + "%";
+            Math.round(zoom * 100) + "%";
+
+
+            if (pdf) {
+
+                paginaTexto.innerText =
+                "Página 1 / " + pdf.numPages;
+
+            }
+
+
+            if (zoom > 1) {
+
+                areaLeitor.classList.add(
+                    "podeArrastar"
+                );
+
+            }
+
+            else {
+
+                areaLeitor.classList.remove(
+                    "podeArrastar"
+                );
+
+            }
 
         }
 
 
-        /* =====================================================
-           ZOOM +
-           ===================================================== */
 
-        zoomMais.addEventListener(
+        /* AUMENTAR ZOOM */
+
+        maisZoom.addEventListener(
             "click",
-            function() {
-
-                alterarZoom(
-                    zoom + passoZoom
-                );
-
-            }
-        );
-
-
-        /* =====================================================
-           ZOOM -
-           ===================================================== */
-
-        zoomMenos.addEventListener(
-            "click",
-            function() {
-
-                alterarZoom(
-                    zoom - passoZoom
-                );
-
-            }
-        );
-
-
-        /* =====================================================
-           RESET
-           ===================================================== */
-
-        zoomReset.addEventListener(
-            "click",
-            function() {
-
-                alterarZoom(1);
-
-            }
-        );
-
-
-        /* =====================================================
-           TELA CHEIA
-           ===================================================== */
-
-        telaCheia.addEventListener(
-            "click",
-            async function() {
-
-                try {
-
-                    if (
-                        !document.fullscreenElement
-                    ) {
-
-                        await document
-                        .documentElement
-                        .requestFullscreen();
-
-                    }
-
-                    else {
-
-                        await document
-                        .exitFullscreen();
-
-                    }
-
-                }
-
-                catch (erro) {
-
-                    console.error(
-                        erro
-                    );
-
-                }
-
-            }
-        );
-
-
-        /* =====================================================
-           DETECTAR PÁGINA ATUAL
-           ===================================================== */
-
-        areaLeitor.addEventListener(
-            "scroll",
-            function() {
+            async function () {
 
                 if (
-                    paginas.length === 0
-                )
-                    return;
-
-
-                let paginaMaisProxima =
-                1;
-
-
-                let menorDistancia =
-                Infinity;
-
-
-                paginas.forEach(
-                    function(
-                        canvas,
-                        indice
-                    ) {
-
-                        const distancia =
-                        Math.abs(
-                            canvas.offsetTop -
-                            areaLeitor.scrollTop
-                        );
-
-
-                        if (
-                            distancia <
-                            menorDistancia
-                        ) {
-
-                            menorDistancia =
-                            distancia;
-
-
-                            paginaMaisProxima =
-                            indice + 1;
-
-                        }
-
-                    }
-                );
-
-
-                paginaAtual =
-                paginaMaisProxima;
-
-
-                atualizarPagina();
-
-            }
-        );
-
-
-        /* =====================================================
-           TEXTO DA PÁGINA
-           ===================================================== */
-
-        function atualizarPagina() {
-
-            if (!pdf)
-                return;
-
-
-            paginaTexto.innerText =
-            "Página " +
-            paginaAtual +
-            " / " +
-            pdf.numPages;
-
-        }
-
-
-        /* =====================================================
-           ZOOM COM CTRL + RODA DO MOUSE
-           ===================================================== */
-
-        areaLeitor.addEventListener(
-            "wheel",
-            function(event) {
-
-                if (
-                    !event.ctrlKey
-                )
-                    return;
-
-
-                event.preventDefault();
-
-
-                if (
-                    event.deltaY < 0
+                    zoom >= zoomMaximo
                 ) {
-
-                    alterarZoom(
-                        zoom + passoZoom
-                    );
-
+                    return;
                 }
 
-                else {
 
-                    alterarZoom(
-                        zoom - passoZoom
-                    );
+                zoom += passoZoom;
 
+
+                if (
+                    zoom > zoomMaximo
+                ) {
+                    zoom = zoomMaximo;
                 }
 
-            },
-            {
-                passive: false
+
+                await renderizarPaginas();
+
             }
         );
 
 
+
+        /* DIMINUIR ZOOM */
+
+        menosZoom.addEventListener(
+            "click",
+            async function () {
+
+                if (
+                    zoom <= zoomMinimo
+                ) {
+                    return;
+                }
+
+
+                zoom -= passoZoom;
+
+
+                if (
+                    zoom < zoomMinimo
+                ) {
+                    zoom = zoomMinimo;
+                }
+
+
+                await renderizarPaginas();
+
+            }
+        );
+
+
+
+        /* VOLTAR PARA 100% */
+
+        zoom100.addEventListener(
+            "click",
+            async function () {
+
+                zoom = 1;
+
+
+                await renderizarPaginas();
+
+
+                areaLeitor.scrollLeft = 0;
+
+                areaLeitor.scrollTop = 0;
+
+            }
+        );
+
+
+
         /* =====================================================
-           TECLADO
+           SISTEMA DE ARRASTAR A PÁGINA
            ===================================================== */
+
+
+        let arrastando = false;
+
+        let inicioX = 0;
+
+        let inicioY = 0;
+
+        let scrollInicialX = 0;
+
+        let scrollInicialY = 0;
+
+
+
+        /* COMEÇAR A ARRASTAR */
+
+        areaLeitor.addEventListener(
+            "mousedown",
+            function (evento) {
+
+
+                /* Só permite arrastar
+                   quando estiver ampliado */
+
+                if (zoom <= 1) {
+                    return;
+                }
+
+
+                arrastando = true;
+
+
+                inicioX =
+                evento.clientX;
+
+
+                inicioY =
+                evento.clientY;
+
+
+                scrollInicialX =
+                areaLeitor.scrollLeft;
+
+
+                scrollInicialY =
+                areaLeitor.scrollTop;
+
+
+                areaLeitor.classList.remove(
+                    "podeArrastar"
+                );
+
+
+                areaLeitor.classList.add(
+                    "arrastando"
+                );
+
+
+                evento.preventDefault();
+
+            }
+        );
+
+
+
+        /* ARRASTAR */
+
+        areaLeitor.addEventListener(
+            "mousemove",
+            function (evento) {
+
+
+                if (!arrastando) {
+                    return;
+                }
+
+
+                const deslocamentoX =
+                evento.clientX - inicioX;
+
+
+                const deslocamentoY =
+                evento.clientY - inicioY;
+
+
+                areaLeitor.scrollLeft =
+                scrollInicialX -
+                deslocamentoX;
+
+
+                areaLeitor.scrollTop =
+                scrollInicialY -
+                deslocamentoY;
+
+            }
+        );
+
+
+
+        /* SOLTAR MOUSE */
 
         document.addEventListener(
-            "keydown",
-            function(event) {
+            "mouseup",
+            function () {
 
-                /*
-                 * + = aumentar
-                 */
 
-                if (
-                    event.key === "+"
-                ) {
-
-                    alterarZoom(
-                        zoom + passoZoom
-                    );
-
+                if (!arrastando) {
+                    return;
                 }
 
 
-                /*
-                 * - = diminuir
-                 */
+                arrastando = false;
 
-                if (
-                    event.key === "-"
-                ) {
 
-                    alterarZoom(
-                        zoom - passoZoom
+                areaLeitor.classList.remove(
+                    "arrastando"
+                );
+
+
+                if (zoom > 1) {
+
+                    areaLeitor.classList.add(
+                        "podeArrastar"
                     );
-
-                }
-
-
-                /*
-                 * 0 = voltar para 100%
-                 */
-
-                if (
-                    event.key === "0"
-                ) {
-
-                    alterarZoom(1);
 
                 }
 
@@ -913,13 +658,27 @@
         );
 
 
-        /* =====================================================
-           INICIAR
-           ===================================================== */
+
+        /* EVITAR ARRASTAR IMAGENS/CANVAS */
+
+        areaLeitor.addEventListener(
+            "dragstart",
+            function (evento) {
+
+                evento.preventDefault();
+
+            }
+        );
+
+
+
+        /* INICIAR */
 
         carregarPDF();
 
+
     </script>
+
 
 </body>
 
