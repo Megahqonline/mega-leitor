@@ -5,7 +5,8 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
 
     <meta name="admaven-placement" content="BrHr6rTs4">
 
@@ -34,6 +35,12 @@
 
         }
 
+
+        /*
+        =====================================================
+        BARRA DE CONTROLES
+        =====================================================
+        */
 
         #controles {
 
@@ -123,7 +130,7 @@
 
         /*
         =====================================================
-        ÁREA DO LEITOR
+        ÁREA DO LEITOR - COMPUTADOR
         =====================================================
         */
 
@@ -141,12 +148,14 @@
 
             cursor: default;
 
+            touch-action: auto;
+
         }
 
 
         /*
         =====================================================
-        CONTEÚDO DAS PÁGINAS
+        CONTEÚDO
         =====================================================
         */
 
@@ -213,17 +222,102 @@
 
         /*
         =====================================================
-        CELULAR
+        MOBILE
         =====================================================
         */
 
         @media (max-width: 768px) {
+
+
+            /*
+            -------------------------------------------------
+            REMOVE CONTROLES DE ZOOM
+            -------------------------------------------------
+            */
+
+            #menosZoom,
+            #maisZoom,
+            #zoomTexto,
+            #zoom100 {
+
+                display: none;
+
+            }
+
+
+            #paginaTexto {
+
+                margin-left: 0;
+
+            }
+
+
+            #telaCheia {
+
+                margin-left: 10px;
+
+            }
+
+
+            /*
+            -------------------------------------------------
+            LEITOR OCUPA TODA A TELA
+            -------------------------------------------------
+            */
 
             #areaLeitor {
 
                 width: 100vw;
 
                 margin-left: 0;
+
+                height: calc(100vh - 55px);
+
+                overflow-x: hidden;
+
+                overflow-y: auto;
+
+                touch-action: pan-x pan-y pinch-zoom;
+
+            }
+
+
+            /*
+            -------------------------------------------------
+            CONTEÚDO MOBILE
+            -------------------------------------------------
+            */
+
+            #leitor {
+
+                width: 100%;
+
+                min-width: 100%;
+
+                padding: 0;
+
+                gap: 0;
+
+                align-items: center;
+
+            }
+
+
+            /*
+            -------------------------------------------------
+            PÁGINAS MOBILE
+            -------------------------------------------------
+            */
+
+            .pagina {
+
+                width: 100vw;
+
+                max-width: 100vw;
+
+                height: auto;
+
+                box-shadow: none;
 
             }
 
@@ -239,6 +333,7 @@
 
 
     <div id="controles">
+
 
         <button id="menosZoom">
             −
@@ -268,6 +363,7 @@
         <button id="telaCheia">
             ⛶
         </button>
+
 
     </div>
 
@@ -421,7 +517,22 @@
 
         /*
         =====================================================
-        CONFIGURAÇÃO DO ZOOM
+        DETECTAR MOBILE
+        =====================================================
+        */
+
+
+        function ehMobile() {
+
+            return window.innerWidth <= 768;
+
+        }
+
+
+
+        /*
+        =====================================================
+        CONFIGURAÇÃO DO ZOOM DESKTOP
         =====================================================
         */
 
@@ -444,56 +555,380 @@
 
         /*
         =====================================================
-        CALCULAR ESCALA BASE
+        ESCALA BASE DESKTOP
         =====================================================
         */
 
-        function calcularEscalaBase() {
+
+        function calcularEscalaDesktop() {
+
+
+            const larguraDisponivel =
+            window.innerWidth * 0.80;
+
+
+            /*
+            Referência para o tamanho da página
+            no computador.
+            */
+
+            return larguraDisponivel / 1000;
+
+        }
+
+
+
+        /*
+        =====================================================
+        RENDERIZAR MOBILE
+        =====================================================
+        */
+
+        async function renderizarPaginaMobile(
+            pagina,
+            numero
+        ) {
+
 
             /*
             -------------------------------------------------
-            DESKTOP
+            LARGURA VISUAL DA PÁGINA
             -------------------------------------------------
             */
 
-            if (window.innerWidth > 768) {
-
-                /*
-                A área do leitor ocupa 80% da tela.
-                */
-
-                const larguraDisponivel =
-                window.innerWidth * 0.80;
+            const larguraTela =
+            areaLeitor.clientWidth;
 
 
-                /*
-                Usamos aproximadamente 75% dessa área
-                como referência para a largura da página.
-                */
+            /*
+            -------------------------------------------------
+            VIEWPORT ORIGINAL
+            -------------------------------------------------
+            */
 
-                return larguraDisponivel / 1000;
+            const viewportOriginal =
+            pagina.getViewport({
+                scale: 1
+            });
+
+
+            /*
+            -------------------------------------------------
+            ESCALA PARA OCUPAR A TELA
+            -------------------------------------------------
+            */
+
+            const escalaVisual =
+            larguraTela /
+            viewportOriginal.width;
+
+
+            /*
+            -------------------------------------------------
+            PIXEL RATIO DO APARELHO
+            -------------------------------------------------
+            */
+
+            const pixelRatio =
+            Math.min(
+                window.devicePixelRatio || 1,
+                3
+            );
+
+
+            /*
+            -------------------------------------------------
+            ESCALA FINAL DE RENDERIZAÇÃO
+            -------------------------------------------------
+            */
+
+            const escalaRender =
+            escalaVisual * pixelRatio;
+
+
+            /*
+            -------------------------------------------------
+            VIEWPORT DE ALTA RESOLUÇÃO
+            -------------------------------------------------
+            */
+
+            const viewportRender =
+            pagina.getViewport({
+
+                scale: escalaRender
+
+            });
+
+
+            /*
+            -------------------------------------------------
+            CANVAS
+            -------------------------------------------------
+            */
+
+            const canvas =
+            document.createElement("canvas");
+
+
+            canvas.className =
+            "pagina";
+
+
+            const contexto =
+            canvas.getContext(
+                "2d",
+                {
+                    alpha: false
+                }
+            );
+
+
+            /*
+            Resolução real do canvas.
+            */
+
+            canvas.width =
+            Math.ceil(
+                viewportRender.width
+            );
+
+
+            canvas.height =
+            Math.ceil(
+                viewportRender.height
+            );
+
+
+            /*
+            Tamanho visual.
+            */
+
+            canvas.style.width =
+            larguraTela + "px";
+
+
+            canvas.style.height =
+            Math.ceil(
+                viewportOriginal.height *
+                escalaVisual
+            ) + "px";
+
+
+            leitor.appendChild(canvas);
+
+
+            /*
+            -------------------------------------------------
+            RENDERIZAR EM ALTA RESOLUÇÃO
+            -------------------------------------------------
+            */
+
+            await pagina.render({
+
+                canvasContext:
+                contexto,
+
+                viewport:
+                viewportRender,
+
+                transform:
+                pixelRatio !== 1
+                ? [pixelRatio, 0, 0, pixelRatio, 0, 0]
+                : null
+
+            }).promise;
+
+        }
+
+
+
+        /*
+        =====================================================
+        RENDERIZAR DESKTOP
+        =====================================================
+        */
+
+        async function renderizarPaginaDesktop(
+            pagina,
+            numero
+        ) {
+
+
+            const escalaBase =
+            calcularEscalaDesktop();
+
+
+            const escala =
+            escalaBase * zoom;
+
+
+            const viewport =
+            pagina.getViewport({
+
+                scale:
+                escala
+
+            });
+
+
+            const canvas =
+            document.createElement("canvas");
+
+
+            canvas.className =
+            "pagina";
+
+
+            const contexto =
+            canvas.getContext("2d");
+
+
+            canvas.width =
+            viewport.width;
+
+
+            canvas.height =
+            viewport.height;
+
+
+            canvas.style.width =
+            viewport.width + "px";
+
+
+            canvas.style.height =
+            viewport.height + "px";
+
+
+            leitor.appendChild(canvas);
+
+
+            await pagina.render({
+
+                canvasContext:
+                contexto,
+
+                viewport:
+                viewport
+
+            }).promise;
+
+        }
+
+
+
+        /*
+        =====================================================
+        RENDERIZAR TODAS AS PÁGINAS
+        =====================================================
+        */
+
+        async function renderizarPaginas() {
+
+
+            leitor.innerHTML = "";
+
+
+            for (
+
+                let numero = 1;
+
+                numero <= pdf.numPages;
+
+                numero++
+
+            ) {
+
+
+                const pagina =
+                await pdf.getPage(numero);
+
+
+                if (ehMobile()) {
+
+
+                    await renderizarPaginaMobile(
+
+                        pagina,
+
+                        numero
+
+                    );
+
+
+                }
+
+
+                else {
+
+
+                    await renderizarPaginaDesktop(
+
+                        pagina,
+
+                        numero
+
+                    );
+
+                }
 
             }
 
 
-            /*
-            -------------------------------------------------
-            CELULAR
-            -------------------------------------------------
-            */
+            atualizarInterface();
+
+        }
+
+
+
+        /*
+        =====================================================
+        ATUALIZAR INTERFACE
+        =====================================================
+        */
+
+        function atualizarInterface() {
+
+
+            if (ehMobile()) {
+
+                zoomTexto.innerText = "";
+
+            }
+
 
             else {
 
-                /*
-                No celular a página utiliza praticamente
-                toda a largura disponível.
-                */
+                zoomTexto.innerText =
+                Math.round(zoom * 100) + "%";
 
-                const larguraDisponivel =
-                window.innerWidth;
+            }
 
 
-                return larguraDisponivel / 1000;
+            if (pdf) {
+
+                paginaTexto.innerText =
+                "Página 1 / " + pdf.numPages;
+
+            }
+
+
+            if (
+                !ehMobile() &&
+                zoom > 1
+            ) {
+
+                areaLeitor.classList.add(
+                    "podeArrastar"
+                );
+
+            }
+
+
+            else {
+
+                areaLeitor.classList.remove(
+                    "podeArrastar"
+                );
 
             }
 
@@ -506,7 +941,6 @@
         CARREGAR PDF
         =====================================================
         */
-
 
         async function carregarPDF() {
 
@@ -553,153 +987,22 @@
 
         /*
         =====================================================
-        RENDERIZAR PÁGINAS
+        AUMENTAR ZOOM - DESKTOP
         =====================================================
         */
-
-
-        async function renderizarPaginas() {
-
-
-            leitor.innerHTML = "";
-
-
-            const escalaBase =
-            calcularEscalaBase();
-
-
-            for (
-
-                let numero = 1;
-
-                numero <= pdf.numPages;
-
-                numero++
-
-            ) {
-
-
-                const pagina =
-                await pdf.getPage(numero);
-
-
-                const escala =
-                escalaBase * zoom;
-
-
-                const viewport =
-                pagina.getViewport({
-
-                    scale: escala
-
-                });
-
-
-                const canvas =
-                document.createElement("canvas");
-
-
-                canvas.className =
-                "pagina";
-
-
-                const contexto =
-                canvas.getContext("2d");
-
-
-                canvas.width =
-                viewport.width;
-
-
-                canvas.height =
-                viewport.height;
-
-
-                canvas.style.width =
-                viewport.width + "px";
-
-
-                canvas.style.height =
-                viewport.height + "px";
-
-
-                leitor.appendChild(canvas);
-
-
-                await pagina.render({
-
-                    canvasContext:
-                    contexto,
-
-                    viewport:
-                    viewport
-
-                }).promise;
-
-            }
-
-
-            atualizarInterface();
-
-        }
-
-
-
-        /*
-        =====================================================
-        ATUALIZAR INTERFACE
-        =====================================================
-        */
-
-
-        function atualizarInterface() {
-
-
-            zoomTexto.innerText =
-            Math.round(zoom * 100) + "%";
-
-
-            if (pdf) {
-
-                paginaTexto.innerText =
-                "Página 1 / " + pdf.numPages;
-
-            }
-
-
-            if (zoom > 1) {
-
-                areaLeitor.classList.add(
-                    "podeArrastar"
-                );
-
-            }
-
-
-            else {
-
-                areaLeitor.classList.remove(
-                    "podeArrastar"
-                );
-
-            }
-
-        }
-
-
-
-        /*
-        =====================================================
-        AUMENTAR ZOOM
-        =====================================================
-        */
-
 
         maisZoom.addEventListener(
 
             "click",
 
             async function () {
+
+
+                if (ehMobile()) {
+
+                    return;
+
+                }
 
 
                 if (zoom >= zoomMaximo) {
@@ -710,6 +1013,12 @@
 
 
                 zoom += passoZoom;
+
+
+                zoom =
+                Math.round(
+                    zoom * 100
+                ) / 100;
 
 
                 if (zoom > zoomMaximo) {
@@ -729,16 +1038,22 @@
 
         /*
         =====================================================
-        DIMINUIR ZOOM
+        DIMINUIR ZOOM - DESKTOP
         =====================================================
         */
-
 
         menosZoom.addEventListener(
 
             "click",
 
             async function () {
+
+
+                if (ehMobile()) {
+
+                    return;
+
+                }
 
 
                 if (zoom <= zoomMinimo) {
@@ -749,6 +1064,12 @@
 
 
                 zoom -= passoZoom;
+
+
+                zoom =
+                Math.round(
+                    zoom * 100
+                ) / 100;
 
 
                 if (zoom < zoomMinimo) {
@@ -768,16 +1089,22 @@
 
         /*
         =====================================================
-        VOLTAR PARA 100%
+        VOLTAR PARA 100% - DESKTOP
         =====================================================
         */
-
 
         zoom100.addEventListener(
 
             "click",
 
             async function () {
+
+
+                if (ehMobile()) {
+
+                    return;
+
+                }
 
 
                 zoom = 1;
@@ -799,29 +1126,44 @@
 
         /*
         =====================================================
-        REAJUSTAR AO REDIMENSIONAR A JANELA
+        REDIMENSIONAMENTO
         =====================================================
         */
 
-
         let larguraAnterior =
         window.innerWidth;
+
+
+        let alturaAnterior =
+        window.innerHeight;
+
+
+        let timerResize = null;
 
 
         window.addEventListener(
 
             "resize",
 
-            async function () {
+            function () {
 
 
                 const novaLargura =
                 window.innerWidth;
 
 
+                const novaAltura =
+                window.innerHeight;
+
+
                 if (
+
                     novaLargura ===
-                    larguraAnterior
+                    larguraAnterior &&
+
+                    novaAltura ===
+                    alturaAnterior
+
                 ) {
 
                     return;
@@ -833,14 +1175,36 @@
                 novaLargura;
 
 
-                if (!pdf) {
-
-                    return;
-
-                }
+                alturaAnterior =
+                novaAltura;
 
 
-                await renderizarPaginas();
+                clearTimeout(
+                    timerResize
+                );
+
+
+                timerResize =
+                setTimeout(
+
+                    async function () {
+
+
+                        if (!pdf) {
+
+                            return;
+
+                        }
+
+
+                        await renderizarPaginas();
+
+
+                    },
+
+                    250
+
+                );
 
             }
 
@@ -850,10 +1214,9 @@
 
         /*
         =====================================================
-        ARRASTAR A PÁGINA
+        ARRASTAR - DESKTOP
         =====================================================
         */
-
 
         let arrastando = false;
 
@@ -876,6 +1239,13 @@
             "mousedown",
 
             function (evento) {
+
+
+                if (ehMobile()) {
+
+                    return;
+
+                }
 
 
                 if (zoom <= 1) {
@@ -981,7 +1351,10 @@
                 );
 
 
-                if (zoom > 1) {
+                if (
+                    !ehMobile() &&
+                    zoom > 1
+                ) {
 
                     areaLeitor.classList.add(
                         "podeArrastar"
@@ -1015,7 +1388,6 @@
         =====================================================
         */
 
-
         telaCheia.addEventListener(
 
             "click",
@@ -1026,10 +1398,13 @@
                 try {
 
 
-                    if (!document.fullscreenElement) {
+                    if (
+                        !document.fullscreenElement
+                    ) {
 
 
-                        await document.documentElement
+                        await document
+                        .documentElement
                         .requestFullscreen();
 
 
@@ -1039,7 +1414,8 @@
                     else {
 
 
-                        await document.exitFullscreen();
+                        await document
+                        .exitFullscreen();
 
                     }
 
@@ -1067,10 +1443,9 @@
 
         /*
         =====================================================
-        ALTERAÇÃO DO ÍCONE DE TELA CHEIA
+        ALTERAR ÍCONE DA TELA CHEIA
         =====================================================
         */
-
 
         document.addEventListener(
 
@@ -1079,10 +1454,13 @@
             function () {
 
 
-                if (document.fullscreenElement) {
+                if (
+                    document.fullscreenElement
+                ) {
 
 
-                    telaCheia.innerText = "✕";
+                    telaCheia.innerText =
+                    "✕";
 
 
                     document.body.classList.add(
@@ -1095,7 +1473,8 @@
                 else {
 
 
-                    telaCheia.innerText = "⛶";
+                    telaCheia.innerText =
+                    "⛶";
 
 
                     document.body.classList.remove(
@@ -1115,7 +1494,6 @@
         INICIAR
         =====================================================
         */
-
 
         carregarPDF();
 
