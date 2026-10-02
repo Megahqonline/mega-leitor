@@ -190,10 +190,12 @@
         */
 
 
-        const pdfUrl =
-        pdfParametro
-        ? "./" + encodeURIComponent(pdfParametro).replace(/%2F/g, "/")
-        : "./UBS%20CIDADE%20LUZ%20PREVIAS.pdf";
+        const parametros = new URLSearchParams(window.location.search);
+const driveId = parametros.get("id");
+
+const pdfUrl = driveId
+  ? "https://polished-term-e56bmega-leitor-proxy.megahqwix.workers.dev/?id=" + encodeURIComponent(driveId)
+  : "./UBS%20CIDADE%20LUZ%20PREVIAS.pdf";
 
 
 
