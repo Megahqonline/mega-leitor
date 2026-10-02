@@ -2,10 +2,13 @@
 <html lang="pt-BR">
 
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>MegaHQ Online - Leitor</title>
+
 
     <style>
 
@@ -13,100 +16,182 @@
             box-sizing: border-box;
         }
 
+
         html,
         body {
+
             margin: 0;
+
             padding: 0;
+
             background: #111;
+
             font-family: Arial, sans-serif;
+
             overflow-x: hidden;
+
         }
+
 
         #controles {
+
             position: fixed;
+
             top: 0;
+
             left: 0;
+
             width: 100%;
+
             height: 55px;
+
             background: #222;
+
             display: flex;
+
             align-items: center;
+
             justify-content: center;
+
             gap: 10px;
+
             z-index: 9999;
+
             color: white;
+
         }
+
 
         #controles button {
+
             border: none;
+
             background: #444;
+
             color: white;
+
             font-size: 20px;
+
             width: 40px;
+
             height: 36px;
+
             cursor: pointer;
+
             border-radius: 4px;
+
         }
+
 
         #controles button:hover {
+
             background: #666;
+
         }
+
 
         #zoomTexto {
+
             min-width: 60px;
+
             text-align: center;
+
             font-size: 15px;
+
         }
+
 
         #paginaTexto {
+
             margin-left: 15px;
+
             font-size: 14px;
+
         }
+
 
         #telaCheia {
+
             margin-left: 15px;
+
             font-size: 20px !important;
+
         }
+
 
         #areaLeitor {
+
             margin-top: 55px;
+
             width: 100vw;
+
             height: calc(100vh - 55px);
+
             overflow: auto;
+
             cursor: default;
+
         }
+
 
         #leitor {
+
             width: max-content;
+
             min-width: 100%;
+
             display: flex;
+
             flex-direction: column;
+
             align-items: center;
+
             gap: 10px;
+
             padding: 20px;
+
         }
+
 
         .pagina {
+
             display: block;
+
             height: auto;
+
             box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+
             user-select: none;
+
             -webkit-user-drag: none;
+
         }
+
 
         #areaLeitor.podeArrastar {
+
             cursor: grab;
+
         }
+
 
         #areaLeitor.arrastando {
+
             cursor: grabbing;
+
         }
 
+
         #carregando {
+
             color: white;
+
             font-size: 18px;
+
             text-align: center;
+
             padding: 30px;
+
         }
 
     </style>
@@ -123,27 +208,33 @@
             −
         </button>
 
+
         <span id="zoomTexto">
             100%
         </span>
+
 
         <button id="maisZoom">
             +
         </button>
 
+
         <button id="zoom100">
             100%
         </button>
 
+
         <span id="paginaTexto">
             Carregando...
         </span>
+
 
         <button id="telaCheia">
             ⛶
         </button>
 
     </div>
+
 
 
     <div id="areaLeitor">
@@ -153,9 +244,13 @@
     </div>
 
 
+
     <div id="carregando">
+
         Carregando HQ...
+
     </div>
+
 
 
     <script type="module">
@@ -169,6 +264,7 @@
         "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.mjs";
 
 
+
         /*
         =====================================================
         PDF DEFINIDO PELA URL
@@ -180,50 +276,103 @@
         new URLSearchParams(window.location.search);
 
 
+        const driveId =
+        parametros.get("id");
+
+
         const pdfParametro =
         parametros.get("pdf");
 
 
+        let pdfUrl;
+
+
+
         /*
-        Se não houver ?pdf= na URL,
-        usa o PDF antigo como padrão.
+        =====================================================
+        GOOGLE DRIVE
+        =====================================================
         */
 
 
-        const parametros = new URLSearchParams(window.location.search);
-const driveId = parametros.get("id");
+        if (driveId) {
 
-const pdfUrl = driveId
-  ? "https://polished-term-e56bmega-leitor-proxy.megahqwix.workers.dev/?id=" + encodeURIComponent(driveId)
-  : "./UBS%20CIDADE%20LUZ%20PREVIAS.pdf";
+            pdfUrl =
+            "https://polished-term-e56bmega-leitor-proxy.megahqwix.workers.dev/?id="
+            + encodeURIComponent(driveId);
+
+        }
+
+
+
+        /*
+        =====================================================
+        PDF LOCAL NO GITHUB
+        =====================================================
+        */
+
+
+        else if (pdfParametro) {
+
+            pdfUrl =
+            "./" +
+            encodeURIComponent(pdfParametro)
+            .replace(/%2F/g, "/");
+
+        }
+
+
+
+        /*
+        =====================================================
+        PDF PADRÃO
+        =====================================================
+        */
+
+
+        else {
+
+            pdfUrl =
+            "./UBS%20CIDADE%20LUZ%20PREVIAS.pdf";
+
+        }
 
 
 
         /* ELEMENTOS */
 
+
         const leitor =
         document.getElementById("leitor");
+
 
         const carregando =
         document.getElementById("carregando");
 
+
         const areaLeitor =
         document.getElementById("areaLeitor");
+
 
         const zoomTexto =
         document.getElementById("zoomTexto");
 
+
         const paginaTexto =
         document.getElementById("paginaTexto");
+
 
         const menosZoom =
         document.getElementById("menosZoom");
 
+
         const maisZoom =
         document.getElementById("maisZoom");
 
+
         const zoom100 =
         document.getElementById("zoom100");
+
 
         const telaCheia =
         document.getElementById("telaCheia");
@@ -232,13 +381,18 @@ const pdfUrl = driveId
 
         /* CONFIGURAÇÃO */
 
+
         let zoom = 1;
+
 
         const zoomMinimo = 0.5;
 
+
         const zoomMaximo = 3;
 
+
         const passoZoom = 0.25;
+
 
         let pdf = null;
 
@@ -246,9 +400,11 @@ const pdfUrl = driveId
 
         /* CARREGAR PDF */
 
+
         async function carregarPDF() {
 
             try {
+
 
                 pdf =
                 await pdfjsLib
@@ -256,7 +412,8 @@ const pdfUrl = driveId
                 .promise;
 
 
-                carregando.style.display = "none";
+                carregando.style.display =
+                "none";
 
 
                 paginaTexto.innerText =
@@ -268,12 +425,16 @@ const pdfUrl = driveId
 
                 atualizarInterface();
 
+
             }
+
 
             catch (erro) {
 
+
                 carregando.innerText =
                 "Erro ao carregar o PDF.";
+
 
                 console.error(erro);
 
@@ -285,7 +446,9 @@ const pdfUrl = driveId
 
         /* RENDERIZAR PÁGINAS */
 
+
         async function renderizarPaginas() {
+
 
             leitor.innerHTML = "";
 
@@ -294,10 +457,15 @@ const pdfUrl = driveId
 
 
             for (
+
                 let numero = 1;
+
                 numero <= pdf.numPages;
+
                 numero++
+
             ) {
+
 
                 const pagina =
                 await pdf.getPage(numero);
@@ -365,7 +533,9 @@ const pdfUrl = driveId
 
         /* ATUALIZAR INTERFACE */
 
+
         function atualizarInterface() {
+
 
             zoomTexto.innerText =
             Math.round(zoom * 100) + "%";
@@ -387,6 +557,7 @@ const pdfUrl = driveId
 
             }
 
+
             else {
 
                 areaLeitor.classList.remove(
@@ -401,69 +572,83 @@ const pdfUrl = driveId
 
         /* AUMENTAR ZOOM */
 
+
         maisZoom.addEventListener(
+
             "click",
+
             async function () {
 
-                if (
-                    zoom >= zoomMaximo
-                ) {
+
+                if (zoom >= zoomMaximo) {
+
                     return;
+
                 }
 
 
                 zoom += passoZoom;
 
 
-                if (
-                    zoom > zoomMaximo
-                ) {
+                if (zoom > zoomMaximo) {
+
                     zoom = zoomMaximo;
+
                 }
 
 
                 await renderizarPaginas();
 
             }
+
         );
 
 
 
         /* DIMINUIR ZOOM */
 
+
         menosZoom.addEventListener(
+
             "click",
+
             async function () {
 
-                if (
-                    zoom <= zoomMinimo
-                ) {
+
+                if (zoom <= zoomMinimo) {
+
                     return;
+
                 }
 
 
                 zoom -= passoZoom;
 
 
-                if (
-                    zoom < zoomMinimo
-                ) {
+                if (zoom < zoomMinimo) {
+
                     zoom = zoomMinimo;
+
                 }
 
 
                 await renderizarPaginas();
 
             }
+
         );
 
 
 
         /* VOLTAR PARA 100% */
 
+
         zoom100.addEventListener(
+
             "click",
+
             async function () {
+
 
                 zoom = 1;
 
@@ -473,9 +658,11 @@ const pdfUrl = driveId
 
                 areaLeitor.scrollLeft = 0;
 
+
                 areaLeitor.scrollTop = 0;
 
             }
+
         );
 
 
@@ -487,21 +674,31 @@ const pdfUrl = driveId
 
         let arrastando = false;
 
+
         let inicioX = 0;
+
 
         let inicioY = 0;
 
+
         let scrollInicialX = 0;
+
 
         let scrollInicialY = 0;
 
 
+
         areaLeitor.addEventListener(
+
             "mousedown",
+
             function (evento) {
 
+
                 if (zoom <= 1) {
+
                     return;
+
                 }
 
 
@@ -537,15 +734,22 @@ const pdfUrl = driveId
                 evento.preventDefault();
 
             }
+
         );
 
 
+
         areaLeitor.addEventListener(
+
             "mousemove",
+
             function (evento) {
 
+
                 if (!arrastando) {
+
                     return;
+
                 }
 
 
@@ -567,15 +771,22 @@ const pdfUrl = driveId
                 deslocamentoY;
 
             }
+
         );
 
 
+
         document.addEventListener(
+
             "mouseup",
+
             function () {
 
+
                 if (!arrastando) {
+
                     return;
+
                 }
 
 
@@ -596,16 +807,21 @@ const pdfUrl = driveId
                 }
 
             }
+
         );
 
 
+
         areaLeitor.addEventListener(
+
             "dragstart",
+
             function (evento) {
 
                 evento.preventDefault();
 
             }
+
         );
 
 
@@ -616,19 +832,27 @@ const pdfUrl = driveId
 
 
         telaCheia.addEventListener(
+
             "click",
+
             async function () {
+
 
                 try {
 
+
                     if (!document.fullscreenElement) {
+
 
                         await document.documentElement
                         .requestFullscreen();
 
+
                     }
 
+
                     else {
+
 
                         await document.exitFullscreen();
 
@@ -636,26 +860,38 @@ const pdfUrl = driveId
 
                 }
 
+
                 catch (erro) {
 
+
                     console.error(
+
                         "Erro ao ativar tela cheia:",
+
                         erro
+
                     );
 
                 }
 
             }
+
         );
 
 
+
         document.addEventListener(
+
             "fullscreenchange",
+
             function () {
+
 
                 if (document.fullscreenElement) {
 
+
                     telaCheia.innerText = "✕";
+
 
                     document.body.classList.add(
                         "modoTelaCheia"
@@ -663,9 +899,12 @@ const pdfUrl = driveId
 
                 }
 
+
                 else {
 
+
                     telaCheia.innerText = "⛶";
+
 
                     document.body.classList.remove(
                         "modoTelaCheia"
@@ -674,11 +913,15 @@ const pdfUrl = driveId
                 }
 
             }
+
         );
 
 
 
-        /* INICIAR */
+        /* =====================================================
+           INICIAR
+           ===================================================== */
+
 
         carregarPDF();
 
