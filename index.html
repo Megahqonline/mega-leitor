@@ -1,1506 +1,1515 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
+<meta charset="UTF-8">
 
-    <meta charset="UTF-8">
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"
+>
 
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+<title>MegaHQ Online</title>
 
-    <meta name="admaven-placement" content="BrHr6rTs4">
+<style>
 
-    <title>MegaHQ Online - Leitor</title>
+* {
+  box-sizing: border-box;
+}
 
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+  background: #111;
+  overflow-x: hidden;
+}
 
-    <style>
+body {
+  font-family: Arial, sans-serif;
+}
 
-        * {
-            box-sizing: border-box;
-        }
+/* =========================
+   BARRA SUPERIOR
+========================= */
 
+#barra {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 55px;
 
-        html,
-        body {
+  background: #1c1c1c;
+  color: white;
 
-            margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-            padding: 0;
+  gap: 8px;
 
-            background: #111;
+  z-index: 1000;
 
-            font-family: Arial, sans-serif;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
 
-            overflow-x: hidden;
+#barra button {
+  height: 36px;
+  min-width: 36px;
 
-        }
+  border: none;
+  border-radius: 5px;
 
+  background: #333;
+  color: white;
 
-        /*
-        =====================================================
-        BARRA DE CONTROLES
-        =====================================================
-        */
+  font-size: 18px;
 
-        #controles {
+  cursor: pointer;
+}
 
-            position: fixed;
+#barra button:hover {
+  background: #444;
+}
 
-            top: 0;
+#zoomTexto {
+  min-width: 55px;
+  text-align: center;
+  font-size: 14px;
+}
 
-            left: 0;
+#fullscreen {
+  font-size: 20px;
+}
 
-            width: 100%;
+/* =========================
+   ÁREA DO LEITOR
+========================= */
 
-            height: 55px;
+#areaLeitor {
 
-            background: #222;
+  margin-top: 55px;
 
-            display: flex;
+  width: 80vw;
+  margin-left: 10vw;
 
-            align-items: center;
+  height: calc(100vh - 55px);
 
-            justify-content: center;
+  overflow: auto;
 
-            gap: 10px;
+  background: #111;
 
-            z-index: 9999;
+  cursor: default;
 
-            color: white;
+  -webkit-overflow-scrolling: touch;
 
-        }
+  scrollbar-width: auto;
+}
 
+/* =========================
+   ÁREA INTERNA
+========================= */
 
-        #controles button {
+#mobileStage {
 
-            border: none;
+  position: relative;
 
-            background: #444;
+  width: 100%;
 
-            color: white;
+  min-height: 100%;
 
-            font-size: 20px;
+}
 
-            width: 40px;
+/* =========================
+   LEITOR
+========================= */
 
-            height: 36px;
+#leitor {
 
-            cursor: pointer;
+  width: max-content;
+  min-width: 100%;
 
-            border-radius: 4px;
+  display: flex;
 
-        }
+  flex-direction: column;
 
+  align-items: center;
 
-        #controles button:hover {
+  gap: 10px;
 
-            background: #666;
+  padding: 20px;
 
-        }
+  transform-origin: 0 0;
 
+}
 
-        #zoomTexto {
+/* =========================
+   PÁGINAS
+========================= */
 
-            min-width: 60px;
+canvas {
 
-            text-align: center;
+  display: block;
 
-            font-size: 15px;
+  max-width: none;
 
-        }
+  height: auto;
 
+  background: white;
 
-        #paginaTexto {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
 
-            margin-left: 15px;
+  user-select: none;
 
-            font-size: 14px;
+  -webkit-user-select: none;
 
-        }
+  -webkit-touch-callout: none;
 
+  image-rendering: auto;
+}
 
-        #telaCheia {
+/* =========================
+   DESKTOP
+========================= */
 
-            margin-left: 15px;
+@media (min-width: 769px) {
 
-            font-size: 20px !important;
+  #areaLeitor {
+    overflow: auto;
+  }
 
-        }
+}
 
+/* =========================
+   MOBILE
+========================= */
 
-        /*
-        =====================================================
-        ÁREA DO LEITOR - COMPUTADOR
-        =====================================================
-        */
+@media (max-width: 768px) {
 
-        #areaLeitor {
+  #barra {
+    height: 50px;
+  }
 
-            margin-top: 55px;
+  #menosZoom,
+  #maisZoom,
+  #zoomTexto,
+  #zoom100 {
+    display: none;
+  }
 
-            width: 80vw;
+  #areaLeitor {
 
-            margin-left: 10vw;
+    margin-top: 50px;
 
-            height: calc(100vh - 55px);
+    width: 100vw;
 
-            overflow: auto;
+    margin-left: 0;
 
-            cursor: default;
+    height: calc(100vh - 50px);
 
-            touch-action: auto;
+    overflow: auto;
 
-        }
+    /*
+      Permite rolagem normal com um dedo.
+      O pinch será tratado pelo JavaScript.
+    */
+    touch-action: pan-x pan-y;
 
+    -webkit-overflow-scrolling: touch;
 
-        /*
-        =====================================================
-        CONTEÚDO
-        =====================================================
-        */
+  }
 
-        #leitor {
+  #mobileStage {
 
-            width: max-content;
+    width: 100%;
 
-            min-width: 100%;
+    min-height: 100%;
 
-            display: flex;
+  }
 
-            flex-direction: column;
+  #leitor {
 
-            align-items: center;
+    padding: 0;
 
-            gap: 10px;
+    gap: 0;
 
-            padding: 20px;
+    align-items: flex-start;
 
-        }
+    min-width: 0;
 
+    width: 100%;
 
-        .pagina {
+  }
 
-            display: block;
+  canvas {
 
-            height: auto;
+    width: 100vw;
 
-            box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+    max-width: none;
 
-            user-select: none;
+    height: auto;
 
-            -webkit-user-drag: none;
+    box-shadow: none;
 
-        }
+  }
 
+}
 
-        #areaLeitor.podeArrastar {
+/* =========================
+   TELA CHEIA
+========================= */
 
-            cursor: grab;
+:fullscreen #barra {
+  display: flex;
+}
 
-        }
+:fullscreen #areaLeitor {
+  margin-top: 55px;
+  height: calc(100vh - 55px);
+}
 
-
-        #areaLeitor.arrastando {
-
-            cursor: grabbing;
-
-        }
-
-
-        #carregando {
-
-            color: white;
-
-            font-size: 18px;
-
-            text-align: center;
-
-            padding: 30px;
-
-        }
-
-
-        /*
-        =====================================================
-        MOBILE
-        =====================================================
-        */
-
-        @media (max-width: 768px) {
-
-
-            /*
-            -------------------------------------------------
-            REMOVE CONTROLES DE ZOOM
-            -------------------------------------------------
-            */
-
-            #menosZoom,
-            #maisZoom,
-            #zoomTexto,
-            #zoom100 {
-
-                display: none;
-
-            }
-
-
-            #paginaTexto {
-
-                margin-left: 0;
-
-            }
-
-
-            #telaCheia {
-
-                margin-left: 10px;
-
-            }
-
-
-            /*
-            -------------------------------------------------
-            LEITOR OCUPA TODA A TELA
-            -------------------------------------------------
-            */
-
-            #areaLeitor {
-
-                width: 100vw;
-
-                margin-left: 0;
-
-                height: calc(100vh - 55px);
-
-                overflow-x: hidden;
-
-                overflow-y: auto;
-
-                touch-action: pan-x pan-y pinch-zoom;
-
-            }
-
-
-            /*
-            -------------------------------------------------
-            CONTEÚDO MOBILE
-            -------------------------------------------------
-            */
-
-            #leitor {
-
-                width: 100%;
-
-                min-width: 100%;
-
-                padding: 0;
-
-                gap: 0;
-
-                align-items: center;
-
-            }
-
-
-            /*
-            -------------------------------------------------
-            PÁGINAS MOBILE
-            -------------------------------------------------
-            */
-
-            .pagina {
-
-                width: 100vw;
-
-                max-width: 100vw;
-
-                height: auto;
-
-                box-shadow: none;
-
-            }
-
-        }
-
-
-    </style>
+</style>
 
 </head>
 
-
 <body>
 
+<!-- =========================
+     BARRA
+========================= -->
 
-    <div id="controles">
+<div id="barra">
 
+  <button id="menosZoom" title="Diminuir zoom">
+    −
+  </button>
 
-        <button id="menosZoom">
-            −
-        </button>
+  <span id="zoomTexto">
+    50%
+  </span>
 
+  <button id="maisZoom" title="Aumentar zoom">
+    +
+  </button>
 
-        <span id="zoomTexto">
-            50%
-        </span>
+  <button id="zoom100" title="Voltar para 100%">
+    100%
+  </button>
 
+  <button id="fullscreen" title="Tela cheia">
+    ⛶
+  </button>
 
-        <button id="maisZoom">
-            +
-        </button>
+</div>
 
 
-        <button id="zoom100">
-            100%
-        </button>
+<!-- =========================
+     LEITOR
+========================= -->
 
+<div id="areaLeitor">
 
-        <span id="paginaTexto">
-            Carregando...
-        </span>
+  <div id="mobileStage">
 
+    <div id="leitor"></div>
 
-        <button id="telaCheia">
-            ⛶
-        </button>
+  </div>
 
+</div>
 
-    </div>
 
+<!-- =========================
+     PDF.JS
+========================= -->
 
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs"
+        type="module"></script>
 
-    <div id="areaLeitor">
 
-        <div id="leitor"></div>
+<script type="module">
 
-    </div>
+import * as pdfjsLib
+from "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs";
 
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs";
 
 
-    <div id="carregando">
+/* =========================================================
+   ELEMENTOS
+========================================================= */
 
-        Carregando HQ...
+const areaLeitor = document.getElementById("areaLeitor");
+const mobileStage = document.getElementById("mobileStage");
+const leitor = document.getElementById("leitor");
 
-    </div>
+const menosZoom = document.getElementById("menosZoom");
+const maisZoom = document.getElementById("maisZoom");
+const zoomTexto = document.getElementById("zoomTexto");
+const zoom100 = document.getElementById("zoom100");
+const fullscreen = document.getElementById("fullscreen");
 
 
+/* =========================================================
+   CONFIGURAÇÕES
+========================================================= */
 
-    <script type="module">
+let zoom = 0.5;
 
+const passoZoom = 0.10;
 
-        import * as pdfjsLib from
-        "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.mjs";
+const zoomMinimo = 0.5;
 
+const zoomMaximo = 3.0;
 
-        pdfjsLib.GlobalWorkerOptions.workerSrc =
-        "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.mjs";
 
+/*
+   Zoom específico do celular.
 
+   1 = largura normal da tela
+   2 = duas vezes
+   3 = três vezes
+   etc.
+*/
 
-        /*
-        =====================================================
-        PDF DEFINIDO PELA URL
-        =====================================================
-        */
+let mobileScale = 1;
 
+const mobileScaleMin = 1;
+const mobileScaleMax = 4;
 
-        const parametros =
-        new URLSearchParams(window.location.search);
 
+/* =========================================================
+   PDF
+========================================================= */
 
-        const driveId =
-        parametros.get("id");
+let pdf = null;
 
 
-        const pdfParametro =
-        parametros.get("pdf");
+/* =========================================================
+   DETECTAR MOBILE
+========================================================= */
 
+function ehMobile() {
 
-        let pdfUrl;
+  return window.innerWidth <= 768;
 
+}
 
 
-        /*
-        =====================================================
-        GOOGLE DRIVE
-        =====================================================
-        */
+/* =========================================================
+   ESCALA DESKTOP
+========================================================= */
 
+function calcularEscalaDesktop() {
 
-        if (driveId) {
+  const larguraDisponivel =
+    window.innerWidth * 0.80;
 
-            pdfUrl =
-            "https://polished-term-e56bmega-leitor-proxy.megahqwix.workers.dev/?id="
-            + encodeURIComponent(driveId);
+  /*
+    A página original do PDF é considerada
+    aproximadamente 1000 px de largura.
 
-        }
+    Isso mantém o comportamento anterior.
+  */
 
+  return larguraDisponivel / 1000;
 
+}
 
-        /*
-        =====================================================
-        PDF LOCAL NO GITHUB
-        =====================================================
-        */
 
+/* =========================================================
+   RENDER DESKTOP
+========================================================= */
 
-        else if (pdfParametro) {
+async function renderizarPaginaDesktop(page, numeroPagina) {
 
-            pdfUrl =
-            "./" +
-            encodeURIComponent(pdfParametro)
-            .replace(/%2F/g, "/");
+  const escalaBase = calcularEscalaDesktop();
 
-        }
+  const escalaFinal =
+    escalaBase * zoom;
 
+  const viewport =
+    page.getViewport({
+      scale: escalaFinal
+    });
 
 
-        /*
-        =====================================================
-        PDF PADRÃO
-        =====================================================
-        */
+  const canvas =
+    document.createElement("canvas");
 
+  const contexto =
+    canvas.getContext("2d");
 
-        else {
 
-            pdfUrl =
-            "./UBS%20CIDADE%20LUZ%20PREVIAS.pdf";
+  /*
+    Renderização em alta resolução.
 
-        }
+    Isso melhora bastante a qualidade sem
+    aumentar o tamanho visual da página.
+  */
 
+  const pixelRatio =
+    Math.min(
+      window.devicePixelRatio || 1,
+      2
+    );
 
 
-        /*
-        =====================================================
-        ELEMENTOS
-        =====================================================
-        */
+  canvas.width =
+    Math.floor(viewport.width * pixelRatio);
 
+  canvas.height =
+    Math.floor(viewport.height * pixelRatio);
 
-        const leitor =
-        document.getElementById("leitor");
 
+  canvas.style.width =
+    viewport.width + "px";
 
-        const carregando =
-        document.getElementById("carregando");
+  canvas.style.height =
+    viewport.height + "px";
 
 
-        const areaLeitor =
-        document.getElementById("areaLeitor");
+  await page.render({
 
+    canvasContext: contexto,
 
-        const zoomTexto =
-        document.getElementById("zoomTexto");
+    viewport: viewport,
 
+    transform:
+      pixelRatio !== 1
+        ? [
+            pixelRatio,
+            0,
+            0,
+            pixelRatio,
+            0,
+            0
+          ]
+        : null
 
-        const paginaTexto =
-        document.getElementById("paginaTexto");
+  }).promise;
 
 
-        const menosZoom =
-        document.getElementById("menosZoom");
+  leitor.appendChild(canvas);
 
+}
 
-        const maisZoom =
-        document.getElementById("maisZoom");
 
+/* =========================================================
+   RENDER MOBILE
+========================================================= */
 
-        const zoom100 =
-        document.getElementById("zoom100");
+async function renderizarPaginaMobile(page) {
 
+  /*
+    Primeiro descobrimos a largura real da página
+    sem zoom.
+  */
 
-        const telaCheia =
-        document.getElementById("telaCheia");
+  const viewportOriginal =
+    page.getViewport({
+      scale: 1
+    });
 
 
+  const larguraTela =
+    areaLeitor.clientWidth;
 
-        /*
-        =====================================================
-        DETECTAR MOBILE
-        =====================================================
-        */
 
+  /*
+    Escala necessária para a página ocupar
+    exatamente a largura do celular.
+  */
 
-        function ehMobile() {
+  const escalaVisual =
+    larguraTela / viewportOriginal.width;
 
-            return window.innerWidth <= 768;
 
-        }
+  /*
+    IMPORTANTE:
 
+    Aqui usamos outputScale apenas para aumentar
+    a resolução REAL do canvas.
 
+    Não aumentamos o viewport novamente.
 
-        /*
-        =====================================================
-        CONFIGURAÇÃO DO ZOOM DESKTOP
-        =====================================================
-        */
+    Isso evita o problema anterior de imagem
+    cortada.
+  */
 
+  const pixelRatio =
+    Math.min(
+      Math.max(
+        window.devicePixelRatio || 1,
+        2
+      ),
+      3
+    );
 
-        let zoom = 0.5;
 
+  const viewport =
+    page.getViewport({
+      scale: escalaVisual
+    });
 
-        const zoomMinimo = 0.5;
 
+  const canvas =
+    document.createElement("canvas");
 
-        const zoomMaximo = 3;
+  const contexto =
+    canvas.getContext("2d");
 
 
-        const passoZoom = 0.10;
+  /*
+    Tamanho REAL do canvas.
+  */
 
+  canvas.width =
+    Math.floor(
+      viewport.width * pixelRatio
+    );
 
-        let pdf = null;
+  canvas.height =
+    Math.floor(
+      viewport.height * pixelRatio
+    );
 
 
+  /*
+    Tamanho VISUAL.
 
-        /*
-        =====================================================
-        ESCALA BASE DESKTOP
-        =====================================================
-        */
+    Assim o navegador vê uma página
+    exatamente da largura do celular.
+  */
 
+  canvas.style.width =
+    viewport.width + "px";
 
-        function calcularEscalaDesktop() {
+  canvas.style.height =
+    viewport.height + "px";
 
 
-            const larguraDisponivel =
-            window.innerWidth * 0.80;
+  await page.render({
 
+    canvasContext: contexto,
 
-            /*
-            Referência para o tamanho da página
-            no computador.
-            */
+    viewport: viewport,
 
-            return larguraDisponivel / 1000;
+    transform: [
+      pixelRatio,
+      0,
+      0,
+      pixelRatio,
+      0,
+      0
+    ]
 
-        }
+  }).promise;
 
 
+  leitor.appendChild(canvas);
 
-        /*
-        =====================================================
-        RENDERIZAR MOBILE
-        =====================================================
-        */
+}
 
-        async function renderizarPaginaMobile(
-            pagina,
-            numero
-        ) {
 
+/* =========================================================
+   RENDERIZAR TODAS AS PÁGINAS
+========================================================= */
 
-            /*
-            -------------------------------------------------
-            LARGURA VISUAL DA PÁGINA
-            -------------------------------------------------
-            */
+async function renderizarPDF() {
 
-            const larguraTela =
-            areaLeitor.clientWidth;
+  leitor.innerHTML = "";
 
+  mobileStage.style.transform = "";
 
-            /*
-            -------------------------------------------------
-            VIEWPORT ORIGINAL
-            -------------------------------------------------
-            */
+  mobileScale = 1;
 
-            const viewportOriginal =
-            pagina.getViewport({
-                scale: 1
-            });
 
+  /*
+    MOBILE
+  */
 
-            /*
-            -------------------------------------------------
-            ESCALA PARA OCUPAR A TELA
-            -------------------------------------------------
-            */
+  if (ehMobile()) {
 
-            const escalaVisual =
-            larguraTela /
-            viewportOriginal.width;
+    for (
+      let i = 1;
+      i <= pdf.numPages;
+      i++
+    ) {
 
+      const page =
+        await pdf.getPage(i);
 
-            /*
-            -------------------------------------------------
-            PIXEL RATIO DO APARELHO
-            -------------------------------------------------
-            */
+      await renderizarPaginaMobile(page);
 
-            const pixelRatio =
-            Math.min(
-                window.devicePixelRatio || 1,
-                3
-            );
+    }
 
 
-            /*
-            -------------------------------------------------
-            ESCALA FINAL DE RENDERIZAÇÃO
-            -------------------------------------------------
-            */
+    /*
+      Depois que todas as páginas foram criadas,
+      calculamos a altura natural do leitor.
 
-            const escalaRender =
-            escalaVisual * pixelRatio;
+      Essa altura será usada para que o Stage
+      acompanhe corretamente o zoom.
+    */
 
+    atualizarMobileStage();
 
-            /*
-            -------------------------------------------------
-            VIEWPORT DE ALTA RESOLUÇÃO
-            -------------------------------------------------
-            */
+    return;
 
-            const viewportRender =
-            pagina.getViewport({
+  }
 
-                scale: escalaRender
 
-            });
+  /*
+    DESKTOP
+  */
 
+  for (
+    let i = 1;
+    i <= pdf.numPages;
+    i++
+  ) {
 
-            /*
-            -------------------------------------------------
-            CANVAS
-            -------------------------------------------------
-            */
+    const page =
+      await pdf.getPage(i);
 
-            const canvas =
-            document.createElement("canvas");
+    await renderizarPaginaDesktop(
+      page,
+      i
+    );
 
+  }
 
-            canvas.className =
-            "pagina";
+}
 
 
-            const contexto =
-            canvas.getContext(
-                "2d",
-                {
-                    alpha: false
-                }
-            );
+/* =========================================================
+   ATUALIZAR STAGE MOBILE
+========================================================= */
 
+function atualizarMobileStage() {
 
-            /*
-            Resolução real do canvas.
-            */
+  if (!ehMobile()) {
+    return;
+  }
 
-            canvas.width =
-            Math.ceil(
-                viewportRender.width
-            );
 
+  /*
+    O leitor ainda está na escala visual 1.
 
-            canvas.height =
-            Math.ceil(
-                viewportRender.height
-            );
+    Pegamos o tamanho natural dele.
+  */
 
+  const larguraBase =
+    leitor.scrollWidth;
 
-            /*
-            Tamanho visual.
-            */
+  const alturaBase =
+    leitor.scrollHeight;
 
-            canvas.style.width =
-            larguraTela + "px";
 
+  /*
+    O Stage recebe o tamanho ampliado.
 
-            canvas.style.height =
-            Math.ceil(
-                viewportOriginal.height *
-                escalaVisual
-            ) + "px";
+    Isso é importante porque o navegador
+    precisa saber que existe conteúdo além
+    da tela para permitir o arraste.
+  */
 
+  mobileStage.style.width =
+    Math.max(
+      areaLeitor.clientWidth,
+      larguraBase * mobileScale
+    ) + "px";
 
-            leitor.appendChild(canvas);
 
+  mobileStage.style.height =
+    Math.max(
+      areaLeitor.clientHeight,
+      alturaBase * mobileScale
+    ) + "px";
 
-            /*
-            -------------------------------------------------
-            RENDERIZAR EM ALTA RESOLUÇÃO
-            -------------------------------------------------
-            */
 
-            await pagina.render({
+  /*
+    A página é ampliada visualmente.
 
-                canvasContext:
-                contexto,
+    transform-origin 0 0 significa:
+    canto superior esquerdo.
+  */
 
-                viewport:
-                viewportRender,
+  leitor.style.transform =
+    `scale(${mobileScale})`;
 
-                transform:
-                pixelRatio !== 1
-                ? [pixelRatio, 0, 0, pixelRatio, 0, 0]
-                : null
+}
 
-            }).promise;
 
-        }
+/* =========================================================
+   APLICAR ZOOM MOBILE
+========================================================= */
 
+function aplicarZoomMobile(
+  novaEscala,
+  centroX,
+  centroY
+) {
 
+  novaEscala =
+    Math.max(
+      mobileScaleMin,
+      Math.min(
+        mobileScaleMax,
+        novaEscala
+      )
+    );
 
-        /*
-        =====================================================
-        RENDERIZAR DESKTOP
-        =====================================================
-        */
 
-        async function renderizarPaginaDesktop(
-            pagina,
-            numero
-        ) {
+  /*
+    Guardamos o ponto que está sendo ampliado.
 
+    Isso evita que a imagem "escape"
+    para outro lugar durante o pinch.
+  */
 
-            const escalaBase =
-            calcularEscalaDesktop();
+  const escalaAnterior =
+    mobileScale;
 
 
-            const escala =
-            escalaBase * zoom;
+  const pontoX =
+    (
+      areaLeitor.scrollLeft +
+      centroX
+    ) / escalaAnterior;
 
 
-            const viewport =
-            pagina.getViewport({
+  const pontoY =
+    (
+      areaLeitor.scrollTop +
+      centroY
+    ) / escalaAnterior;
 
-                scale:
-                escala
 
-            });
+  mobileScale =
+    novaEscala;
 
 
-            const canvas =
-            document.createElement("canvas");
+  atualizarMobileStage();
 
 
-            canvas.className =
-            "pagina";
+  /*
+    Mantém o ponto entre os dedos
+    aproximadamente no mesmo lugar.
+  */
 
+  let novoScrollX =
+    pontoX * mobileScale -
+    centroX;
 
-            const contexto =
-            canvas.getContext("2d");
 
+  let novoScrollY =
+    pontoY * mobileScale -
+    centroY;
 
-            canvas.width =
-            viewport.width;
 
+  const maxScrollX =
+    Math.max(
+      0,
+      areaLeitor.scrollWidth -
+      areaLeitor.clientWidth
+    );
 
-            canvas.height =
-            viewport.height;
 
+  const maxScrollY =
+    Math.max(
+      0,
+      areaLeitor.scrollHeight -
+      areaLeitor.clientHeight
+    );
 
-            canvas.style.width =
-            viewport.width + "px";
 
+  novoScrollX =
+    Math.max(
+      0,
+      Math.min(
+        novoScrollX,
+        maxScrollX
+      )
+    );
 
-            canvas.style.height =
-            viewport.height + "px";
 
+  novoScrollY =
+    Math.max(
+      0,
+      Math.min(
+        novoScrollY,
+        maxScrollY
+      )
+    );
 
-            leitor.appendChild(canvas);
 
+  areaLeitor.scrollLeft =
+    novoScrollX;
 
-            await pagina.render({
+  areaLeitor.scrollTop =
+    novoScrollY;
 
-                canvasContext:
-                contexto,
+}
 
-                viewport:
-                viewport
 
-            }).promise;
+/* =========================================================
+   CONTROLE DE PINCH
+========================================================= */
 
-        }
+let pinchAtivo = false;
 
+let distanciaInicial = 0;
 
+let escalaInicialPinch = 1;
 
-        /*
-        =====================================================
-        RENDERIZAR TODAS AS PÁGINAS
-        =====================================================
-        */
 
-        async function renderizarPaginas() {
+/* =========================================================
+   DISTÂNCIA ENTRE DOIS DEDOS
+========================================================= */
 
+function distanciaEntreDedos(touch1, touch2) {
 
-            leitor.innerHTML = "";
+  const dx =
+    touch2.clientX -
+    touch1.clientX;
 
+  const dy =
+    touch2.clientY -
+    touch1.clientY;
 
-            for (
+  return Math.sqrt(
+    dx * dx +
+    dy * dy
+  );
 
-                let numero = 1;
+}
 
-                numero <= pdf.numPages;
 
-                numero++
+/* =========================================================
+   CENTRO DOS DOIS DEDOS
+========================================================= */
 
-            ) {
+function centroDosDedos(touch1, touch2) {
 
+  return {
 
-                const pagina =
-                await pdf.getPage(numero);
+    x:
+      (
+        touch1.clientX +
+        touch2.clientX
+      ) / 2,
 
+    y:
+      (
+        touch1.clientY +
+        touch2.clientY
+      ) / 2
 
-                if (ehMobile()) {
+  };
 
+}
 
-                    await renderizarPaginaMobile(
 
-                        pagina,
+/* =========================================================
+   TOUCH START
+========================================================= */
 
-                        numero
+areaLeitor.addEventListener(
+  "touchstart",
+  function(event) {
 
-                    );
+    if (!ehMobile()) {
+      return;
+    }
 
 
-                }
+    /*
+      Só iniciamos o pinch quando existem
+      dois dedos.
+    */
 
+    if (event.touches.length === 2) {
 
-                else {
+      pinchAtivo = true;
 
 
-                    await renderizarPaginaDesktop(
+      const t1 =
+        event.touches[0];
 
-                        pagina,
+      const t2 =
+        event.touches[1];
 
-                        numero
 
-                    );
-
-                }
-
-            }
-
-
-            atualizarInterface();
-
-        }
-
-
-
-        /*
-        =====================================================
-        ATUALIZAR INTERFACE
-        =====================================================
-        */
-
-        function atualizarInterface() {
-
-
-            if (ehMobile()) {
-
-                zoomTexto.innerText = "";
-
-            }
-
-
-            else {
-
-                zoomTexto.innerText =
-                Math.round(zoom * 100) + "%";
-
-            }
-
-
-            if (pdf) {
-
-                paginaTexto.innerText =
-                "Página 1 / " + pdf.numPages;
-
-            }
-
-
-            if (
-                !ehMobile() &&
-                zoom > 1
-            ) {
-
-                areaLeitor.classList.add(
-                    "podeArrastar"
-                );
-
-            }
-
-
-            else {
-
-                areaLeitor.classList.remove(
-                    "podeArrastar"
-                );
-
-            }
-
-        }
-
-
-
-        /*
-        =====================================================
-        CARREGAR PDF
-        =====================================================
-        */
-
-        async function carregarPDF() {
-
-            try {
-
-
-                pdf =
-                await pdfjsLib
-                .getDocument(pdfUrl)
-                .promise;
-
-
-                carregando.style.display =
-                "none";
-
-
-                paginaTexto.innerText =
-                "Página 1 / " + pdf.numPages;
-
-
-                await renderizarPaginas();
-
-
-                atualizarInterface();
-
-
-            }
-
-
-            catch (erro) {
-
-
-                carregando.innerText =
-                "Erro ao carregar o PDF.";
-
-
-                console.error(erro);
-
-            }
-
-        }
-
-
-
-        /*
-        =====================================================
-        AUMENTAR ZOOM - DESKTOP
-        =====================================================
-        */
-
-        maisZoom.addEventListener(
-
-            "click",
-
-            async function () {
-
-
-                if (ehMobile()) {
-
-                    return;
-
-                }
-
-
-                if (zoom >= zoomMaximo) {
-
-                    return;
-
-                }
-
-
-                zoom += passoZoom;
-
-
-                zoom =
-                Math.round(
-                    zoom * 100
-                ) / 100;
-
-
-                if (zoom > zoomMaximo) {
-
-                    zoom = zoomMaximo;
-
-                }
-
-
-                await renderizarPaginas();
-
-            }
-
+      distanciaInicial =
+        distanciaEntreDedos(
+          t1,
+          t2
         );
 
 
+      escalaInicialPinch =
+        mobileScale;
 
-        /*
-        =====================================================
-        DIMINUIR ZOOM - DESKTOP
-        =====================================================
-        */
+    }
 
-        menosZoom.addEventListener(
+  },
+  {
+    passive: true
+  }
+);
 
-            "click",
 
-            async function () {
+/* =========================================================
+   TOUCH MOVE
+========================================================= */
 
+areaLeitor.addEventListener(
+  "touchmove",
+  function(event) {
 
-                if (ehMobile()) {
+    if (!ehMobile()) {
+      return;
+    }
 
-                    return;
 
-                }
+    /*
+      Um dedo:
 
+      NÃO fazemos nada.
 
-                if (zoom <= zoomMinimo) {
+      O próprio navegador cuida da rolagem
+      vertical e horizontal.
 
-                    return;
+      Isso é o que permite arrastar a página.
+    */
 
-                }
+    if (
+      event.touches.length !== 2 ||
+      !pinchAtivo
+    ) {
 
+      return;
 
-                zoom -= passoZoom;
+    }
 
 
-                zoom =
-                Math.round(
-                    zoom * 100
-                ) / 100;
+    /*
+      Dois dedos:
 
+      aqui assumimos o controle para fazer
+      o zoom personalizado.
+    */
 
-                if (zoom < zoomMinimo) {
+    event.preventDefault();
 
-                    zoom = zoomMinimo;
 
-                }
+    const t1 =
+      event.touches[0];
 
+    const t2 =
+      event.touches[1];
 
-                await renderizarPaginas();
 
-            }
+    const distanciaAtual =
+      distanciaEntreDedos(
+        t1,
+        t2
+      );
 
-        );
 
+    if (distanciaInicial <= 0) {
+      return;
+    }
 
 
-        /*
-        =====================================================
-        VOLTAR PARA 100% - DESKTOP
-        =====================================================
-        */
+    const fator =
+      distanciaAtual /
+      distanciaInicial;
 
-        zoom100.addEventListener(
 
-            "click",
+    const novaEscala =
+      escalaInicialPinch *
+      fator;
 
-            async function () {
 
+    const centro =
+      centroDosDedos(
+        t1,
+        t2
+      );
 
-                if (ehMobile()) {
 
-                    return;
+    const rect =
+      areaLeitor.getBoundingClientRect();
 
-                }
 
+    const centroX =
+      centro.x -
+      rect.left;
 
-                zoom = 1;
 
+    const centroY =
+      centro.y -
+      rect.top;
 
-                await renderizarPaginas();
 
+    aplicarZoomMobile(
+      novaEscala,
+      centroX,
+      centroY
+    );
 
-                areaLeitor.scrollLeft = 0;
+  },
+  {
+    passive: false
+  }
+);
 
 
-                areaLeitor.scrollTop = 0;
+/* =========================================================
+   TOUCH END
+========================================================= */
 
-            }
+areaLeitor.addEventListener(
+  "touchend",
+  function(event) {
 
-        );
+    if (!ehMobile()) {
+      return;
+    }
 
 
+    if (event.touches.length < 2) {
 
-        /*
-        =====================================================
-        REDIMENSIONAMENTO
-        =====================================================
-        */
+      pinchAtivo = false;
 
-        let larguraAnterior =
-        window.innerWidth;
+      distanciaInicial = 0;
 
+    }
 
-        let alturaAnterior =
-        window.innerHeight;
+  },
+  {
+    passive: true
+  }
+);
 
 
-        let timerResize = null;
+/* =========================================================
+   TOUCH CANCEL
+========================================================= */
 
+areaLeitor.addEventListener(
+  "touchcancel",
+  function() {
 
-        window.addEventListener(
+    pinchAtivo = false;
 
-            "resize",
+    distanciaInicial = 0;
 
-            function () {
+  },
+  {
+    passive: true
+  }
+);
 
 
-                const novaLargura =
-                window.innerWidth;
+/* =========================================================
+   ZOOM DESKTOP
+========================================================= */
 
+function atualizarZoomDesktop() {
 
-                const novaAltura =
-                window.innerHeight;
+  zoom =
+    Math.max(
+      zoomMinimo,
+      Math.min(
+        zoomMaximo,
+        zoom
+      )
+    );
 
 
-                if (
+  zoomTexto.textContent =
+    Math.round(
+      zoom * 100
+    ) + "%";
 
-                    novaLargura ===
-                    larguraAnterior &&
 
-                    novaAltura ===
-                    alturaAnterior
+  renderizarPDF();
 
-                ) {
+}
 
-                    return;
 
-                }
+/* =========================================================
+   DIMINUIR ZOOM
+========================================================= */
 
+menosZoom.addEventListener(
+  "click",
+  function() {
 
-                larguraAnterior =
-                novaLargura;
+    if (ehMobile()) {
+      return;
+    }
 
+    zoom -= passoZoom;
 
-                alturaAnterior =
-                novaAltura;
+    atualizarZoomDesktop();
 
+  }
+);
 
-                clearTimeout(
-                    timerResize
-                );
 
+/* =========================================================
+   AUMENTAR ZOOM
+========================================================= */
 
-                timerResize =
-                setTimeout(
+maisZoom.addEventListener(
+  "click",
+  function() {
 
-                    async function () {
+    if (ehMobile()) {
+      return;
+    }
 
+    zoom += passoZoom;
 
-                        if (!pdf) {
+    atualizarZoomDesktop();
 
-                            return;
+  }
+);
 
-                        }
 
+/* =========================================================
+   ZOOM 100%
+========================================================= */
 
-                        await renderizarPaginas();
+zoom100.addEventListener(
+  "click",
+  function() {
 
+    if (ehMobile()) {
+      return;
+    }
 
-                    },
+    zoom = 1;
 
-                    250
+    atualizarZoomDesktop();
 
-                );
+  }
+);
 
-            }
 
-        );
+/* =========================================================
+   TELA CHEIA
+========================================================= */
 
+fullscreen.addEventListener(
+  "click",
+  async function() {
 
+    try {
 
-        /*
-        =====================================================
-        ARRASTAR - DESKTOP
-        =====================================================
-        */
+      if (!document.fullscreenElement) {
 
-        let arrastando = false;
+        await document.documentElement.requestFullscreen();
 
+        fullscreen.textContent = "✕";
 
-        let inicioX = 0;
+      } else {
 
+        await document.exitFullscreen();
 
-        let inicioY = 0;
+        fullscreen.textContent = "⛶";
 
+      }
 
-        let scrollInicialX = 0;
+    } catch (erro) {
 
+      console.error(
+        "Erro ao abrir tela cheia:",
+        erro
+      );
 
-        let scrollInicialY = 0;
+    }
 
+  }
+);
 
 
-        areaLeitor.addEventListener(
+/* =========================================================
+   ESC SAIR DA TELA CHEIA
+========================================================= */
 
-            "mousedown",
+document.addEventListener(
+  "fullscreenchange",
+  function() {
 
-            function (evento) {
+    if (document.fullscreenElement) {
 
+      fullscreen.textContent = "✕";
 
-                if (ehMobile()) {
+    } else {
 
-                    return;
+      fullscreen.textContent = "⛶";
 
-                }
+    }
 
+  }
+);
 
-                if (zoom <= 1) {
 
-                    return;
+/* =========================================================
+   ARRASTAR COM MOUSE — DESKTOP
+========================================================= */
 
-                }
+let arrastando = false;
 
+let inicioX = 0;
+let inicioY = 0;
 
-                arrastando = true;
+let scrollInicialX = 0;
+let scrollInicialY = 0;
 
 
-                inicioX =
-                evento.clientX;
+areaLeitor.addEventListener(
+  "mousedown",
+  function(event) {
 
+    if (ehMobile()) {
+      return;
+    }
 
-                inicioY =
-                evento.clientY;
 
+    /*
+      Só permite arrastar quando
+      o zoom está acima de 100%.
+    */
 
-                scrollInicialX =
-                areaLeitor.scrollLeft;
+    if (zoom <= 1) {
+      return;
+    }
 
 
-                scrollInicialY =
-                areaLeitor.scrollTop;
+    arrastando = true;
 
+    inicioX = event.clientX;
+    inicioY = event.clientY;
 
-                areaLeitor.classList.remove(
-                    "podeArrastar"
-                );
+    scrollInicialX =
+      areaLeitor.scrollLeft;
 
+    scrollInicialY =
+      areaLeitor.scrollTop;
 
-                areaLeitor.classList.add(
-                    "arrastando"
-                );
 
+    areaLeitor.style.cursor =
+      "grabbing";
 
-                evento.preventDefault();
+  }
+);
 
-            }
 
-        );
+window.addEventListener(
+  "mousemove",
+  function(event) {
 
+    if (
+      !arrastando ||
+      ehMobile()
+    ) {
 
+      return;
 
-        areaLeitor.addEventListener(
+    }
 
-            "mousemove",
 
-            function (evento) {
+    const deslocamentoX =
+      event.clientX -
+      inicioX;
 
 
-                if (!arrastando) {
+    const deslocamentoY =
+      event.clientY -
+      inicioY;
 
-                    return;
 
-                }
+    areaLeitor.scrollLeft =
+      scrollInicialX -
+      deslocamentoX;
 
 
-                const deslocamentoX =
-                evento.clientX - inicioX;
+    areaLeitor.scrollTop =
+      scrollInicialY -
+      deslocamentoY;
 
+  }
+);
 
-                const deslocamentoY =
-                evento.clientY - inicioY;
 
+window.addEventListener(
+  "mouseup",
+  function() {
 
-                areaLeitor.scrollLeft =
-                scrollInicialX -
-                deslocamentoX;
+    if (!arrastando) {
+      return;
+    }
 
 
-                areaLeitor.scrollTop =
-                scrollInicialY -
-                deslocamentoY;
+    arrastando = false;
 
-            }
+    areaLeitor.style.cursor =
+      "default";
 
-        );
+  }
+);
 
 
+/* =========================================================
+   REDIMENSIONAMENTO DA JANELA
+========================================================= */
 
-        document.addEventListener(
+let resizeTimer = null;
 
-            "mouseup",
+window.addEventListener(
+  "resize",
+  function() {
 
-            function () {
+    clearTimeout(resizeTimer);
 
 
-                if (!arrastando) {
+    resizeTimer =
+      setTimeout(
+        function() {
 
-                    return;
+          renderizarPDF();
 
-                }
+        },
+        250
+      );
 
+  }
+);
 
-                arrastando = false;
 
+/* =========================================================
+   CARREGAR PDF
+========================================================= */
 
-                areaLeitor.classList.remove(
-                    "arrastando"
-                );
+async function carregarPDF() {
 
+  const parametros =
+    new URLSearchParams(
+      window.location.search
+    );
 
-                if (
-                    !ehMobile() &&
-                    zoom > 1
-                ) {
 
-                    areaLeitor.classList.add(
-                        "podeArrastar"
-                    );
+  const id =
+    parametros.get("id");
 
-                }
+  const arquivo =
+    parametros.get("pdf");
 
-            }
 
-        );
+  let urlPDF;
 
 
+  /*
+    GOOGLE DRIVE
+  */
 
-        areaLeitor.addEventListener(
+  if (id) {
 
-            "dragstart",
+    urlPDF =
+      "https://polished-term-e56bmega-leitor-proxy.megahqwix.workers.dev/?id="
+      + encodeURIComponent(id);
 
-            function (evento) {
+  }
 
-                evento.preventDefault();
 
-            }
+  /*
+    ARQUIVO LOCAL DO GITHUB
+  */
 
-        );
+  else if (arquivo) {
 
+    urlPDF =
+      arquivo;
 
+  }
 
-        /*
-        =====================================================
-        TELA CHEIA
-        =====================================================
-        */
 
-        telaCheia.addEventListener(
+  /*
+    PDF PADRÃO
+  */
 
-            "click",
+  else {
 
-            async function () {
+    urlPDF =
+      "UBS CIDADE LUZ PREVIAS.pdf";
 
+  }
 
-                try {
 
+  try {
 
-                    if (
-                        !document.fullscreenElement
-                    ) {
+    pdf =
+      await pdfjsLib.getDocument(
+        urlPDF
+      ).promise;
 
 
-                        await document
-                        .documentElement
-                        .requestFullscreen();
+    await renderizarPDF();
 
+  }
 
-                    }
+  catch (erro) {
 
+    console.error(
+      "Erro ao carregar PDF:",
+      erro
+    );
 
-                    else {
 
+    leitor.innerHTML = "";
 
-                        await document
-                        .exitFullscreen();
+    const mensagem =
+      document.createElement("div");
 
-                    }
 
-                }
+    mensagem.style.color =
+      "white";
 
+    mensagem.style.padding =
+      "30px";
 
-                catch (erro) {
+    mensagem.style.fontSize =
+      "18px";
 
+    mensagem.textContent =
+      "Não foi possível carregar o PDF.";
 
-                    console.error(
 
-                        "Erro ao ativar tela cheia:",
+    leitor.appendChild(
+      mensagem
+    );
 
-                        erro
+  }
 
-                    );
+}
 
-                }
 
-            }
+/* =========================================================
+   INICIAR
+========================================================= */
 
-        );
+carregarPDF();
 
-
-
-        /*
-        =====================================================
-        ALTERAR ÍCONE DA TELA CHEIA
-        =====================================================
-        */
-
-        document.addEventListener(
-
-            "fullscreenchange",
-
-            function () {
-
-
-                if (
-                    document.fullscreenElement
-                ) {
-
-
-                    telaCheia.innerText =
-                    "✕";
-
-
-                    document.body.classList.add(
-                        "modoTelaCheia"
-                    );
-
-                }
-
-
-                else {
-
-
-                    telaCheia.innerText =
-                    "⛶";
-
-
-                    document.body.classList.remove(
-                        "modoTelaCheia"
-                    );
-
-                }
-
-            }
-
-        );
-
-
-
-        /*
-        =====================================================
-        INICIAR
-        =====================================================
-        */
-
-        carregarPDF();
-
-
-    </script>
-
+</script>
 
 </body>
-
 </html>
