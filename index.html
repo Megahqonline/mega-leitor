@@ -6,7 +6,8 @@
     <meta charset="UTF-8">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name='admaven-placement' content=BrHr6rTs4>
+
+    <meta name="admaven-placement" content="BrHr6rTs4">
 
     <title>MegaHQ Online - Leitor</title>
 
@@ -120,40 +121,53 @@
         }
 
 
-       #areaLeitor {
+        /*
+        =====================================================
+        ÁREA DO LEITOR
+        =====================================================
+        */
 
-    margin-top: 55px;
+        #areaLeitor {
 
-    width: 80vw;
+            margin-top: 55px;
 
-    margin-left: 10vw;
+            width: 80vw;
 
-    height: calc(100vh - 55px);
+            margin-left: 10vw;
 
-    overflow: auto;
+            height: calc(100vh - 55px);
 
-    cursor: default;
+            overflow: auto;
+
+            cursor: default;
 
         }
 
 
-       #leitor {
+        /*
+        =====================================================
+        CONTEÚDO DAS PÁGINAS
+        =====================================================
+        */
 
-    width: max-content;
+        #leitor {
 
-    min-width: 100%;
+            width: max-content;
 
-    display: flex;
+            min-width: 100%;
 
-    flex-direction: column;
+            display: flex;
 
-    align-items: center;
+            flex-direction: column;
 
-    gap: 10px;
+            align-items: center;
 
-    padding: 20px;
+            gap: 10px;
 
-}
+            padding: 20px;
+
+        }
+
 
         .pagina {
 
@@ -196,6 +210,26 @@
 
         }
 
+
+        /*
+        =====================================================
+        CELULAR
+        =====================================================
+        */
+
+        @media (max-width: 768px) {
+
+            #areaLeitor {
+
+                width: 100vw;
+
+                margin-left: 0;
+
+            }
+
+        }
+
+
     </style>
 
 </head>
@@ -212,7 +246,7 @@
 
 
         <span id="zoomTexto">
-            100%
+            50%
         </span>
 
 
@@ -341,7 +375,11 @@
 
 
 
-        /* ELEMENTOS */
+        /*
+        =====================================================
+        ELEMENTOS
+        =====================================================
+        */
 
 
         const leitor =
@@ -381,7 +419,11 @@
 
 
 
-        /* CONFIGURAÇÃO */
+        /*
+        =====================================================
+        CONFIGURAÇÃO DO ZOOM
+        =====================================================
+        */
 
 
         let zoom = 0.5;
@@ -393,14 +435,77 @@
         const zoomMaximo = 3;
 
 
-        const passoZoom = 0.25;
+        const passoZoom = 0.10;
 
 
         let pdf = null;
 
 
 
-        /* CARREGAR PDF */
+        /*
+        =====================================================
+        CALCULAR ESCALA BASE
+        =====================================================
+        */
+
+        function calcularEscalaBase() {
+
+            /*
+            -------------------------------------------------
+            DESKTOP
+            -------------------------------------------------
+            */
+
+            if (window.innerWidth > 768) {
+
+                /*
+                A área do leitor ocupa 80% da tela.
+                */
+
+                const larguraDisponivel =
+                window.innerWidth * 0.80;
+
+
+                /*
+                Usamos aproximadamente 75% dessa área
+                como referência para a largura da página.
+                */
+
+                return larguraDisponivel / 1000;
+
+            }
+
+
+            /*
+            -------------------------------------------------
+            CELULAR
+            -------------------------------------------------
+            */
+
+            else {
+
+                /*
+                No celular a página utiliza praticamente
+                toda a largura disponível.
+                */
+
+                const larguraDisponivel =
+                window.innerWidth;
+
+
+                return larguraDisponivel / 1000;
+
+            }
+
+        }
+
+
+
+        /*
+        =====================================================
+        CARREGAR PDF
+        =====================================================
+        */
 
 
         async function carregarPDF() {
@@ -446,7 +551,11 @@
 
 
 
-        /* RENDERIZAR PÁGINAS */
+        /*
+        =====================================================
+        RENDERIZAR PÁGINAS
+        =====================================================
+        */
 
 
         async function renderizarPaginas() {
@@ -455,7 +564,8 @@
             leitor.innerHTML = "";
 
 
-            const escalaBase = 1.5;
+            const escalaBase =
+            calcularEscalaBase();
 
 
             for (
@@ -479,7 +589,9 @@
 
                 const viewport =
                 pagina.getViewport({
+
                     scale: escala
+
                 });
 
 
@@ -533,7 +645,11 @@
 
 
 
-        /* ATUALIZAR INTERFACE */
+        /*
+        =====================================================
+        ATUALIZAR INTERFACE
+        =====================================================
+        */
 
 
         function atualizarInterface() {
@@ -572,7 +688,11 @@
 
 
 
-        /* AUMENTAR ZOOM */
+        /*
+        =====================================================
+        AUMENTAR ZOOM
+        =====================================================
+        */
 
 
         maisZoom.addEventListener(
@@ -607,7 +727,11 @@
 
 
 
-        /* DIMINUIR ZOOM */
+        /*
+        =====================================================
+        DIMINUIR ZOOM
+        =====================================================
+        */
 
 
         menosZoom.addEventListener(
@@ -642,7 +766,11 @@
 
 
 
-        /* VOLTAR PARA 100% */
+        /*
+        =====================================================
+        VOLTAR PARA 100%
+        =====================================================
+        */
 
 
         zoom100.addEventListener(
@@ -669,9 +797,62 @@
 
 
 
-        /* =====================================================
-           ARRASTAR A PÁGINA
-           ===================================================== */
+        /*
+        =====================================================
+        REAJUSTAR AO REDIMENSIONAR A JANELA
+        =====================================================
+        */
+
+
+        let larguraAnterior =
+        window.innerWidth;
+
+
+        window.addEventListener(
+
+            "resize",
+
+            async function () {
+
+
+                const novaLargura =
+                window.innerWidth;
+
+
+                if (
+                    novaLargura ===
+                    larguraAnterior
+                ) {
+
+                    return;
+
+                }
+
+
+                larguraAnterior =
+                novaLargura;
+
+
+                if (!pdf) {
+
+                    return;
+
+                }
+
+
+                await renderizarPaginas();
+
+            }
+
+        );
+
+
+
+        /*
+        =====================================================
+        ARRASTAR A PÁGINA
+        =====================================================
+        */
 
 
         let arrastando = false;
@@ -828,9 +1009,11 @@
 
 
 
-        /* =====================================================
-           TELA CHEIA
-           ===================================================== */
+        /*
+        =====================================================
+        TELA CHEIA
+        =====================================================
+        */
 
 
         telaCheia.addEventListener(
@@ -882,6 +1065,13 @@
 
 
 
+        /*
+        =====================================================
+        ALTERAÇÃO DO ÍCONE DE TELA CHEIA
+        =====================================================
+        */
+
+
         document.addEventListener(
 
             "fullscreenchange",
@@ -920,9 +1110,11 @@
 
 
 
-        /* =====================================================
-           INICIAR
-           ===================================================== */
+        /*
+        =====================================================
+        INICIAR
+        =====================================================
+        */
 
 
         carregarPDF();
