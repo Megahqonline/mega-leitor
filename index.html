@@ -90,22 +90,27 @@ body {
 
 #areaLeitor {
 
-  margin-top: 55px;
+    margin-top: 50px;
 
-  width: 80vw;
-  margin-left: 10vw;
+    width: 100vw;
 
-  height: calc(100vh - 55px);
+    margin-left: 0;
 
-  overflow: auto;
+    height: calc(100vh - 50px);
 
-  background: #111;
+    overflow: auto;
 
-  cursor: default;
+    /*
+      O JavaScript controla o pinch.
+      O navegador continua responsável
+      pela rolagem com um dedo.
+    */
+    touch-action: pan-x pan-y;
 
-  -webkit-overflow-scrolling: touch;
+    -webkit-overflow-scrolling: touch;
 
-  scrollbar-width: auto;
+    overscroll-behavior: contain;
+
 }
 
 /* =========================
@@ -1121,7 +1126,46 @@ areaLeitor.addEventListener(
    ZOOM DESKTOP
 ========================================================= */
 
-function atualizarZoomDesktop() {
+async function atualizarZoomDesktop() {
+
+  if (ehMobile()) {
+    return;
+  }
+
+  /*
+    Guardamos o ponto atualmente visível.
+
+    Usamos o centro da área de leitura como
+    referência para que o usuário continue
+    olhando para a mesma região da HQ.
+  */
+
+  const centroX =
+    areaLeitor.scrollLeft +
+    areaLeitor.clientWidth / 2;
+
+  const centroY =
+    areaLeitor.scrollTop +
+    areaLeitor.clientHeight / 2;
+
+
+  /*
+    Guardamos a posição proporcional em relação
+    ao zoom atual.
+  */
+
+  const proporcaoX =
+    centroX /
+    zoom;
+
+  const proporcaoY =
+    centroY /
+    zoom;
+
+
+  /*
+    Aplica o novo zoom.
+  */
 
   zoom =
     Math.max(
@@ -1139,7 +1183,34 @@ function atualizarZoomDesktop() {
     ) + "%";
 
 
-  renderizarPDF();
+  /*
+    Renderiza novamente.
+  */
+
+  await renderizarPDF();
+
+
+  /*
+    Depois que as páginas foram reconstruídas,
+    reposicionamos a visualização.
+
+    Assim o mesmo ponto permanece no centro.
+  */
+
+  areaLeitor.scrollLeft =
+    Math.max(
+      0,
+      proporcaoX * zoom -
+      areaLeitor.clientWidth / 2
+    );
+
+
+  areaLeitor.scrollTop =
+    Math.max(
+      0,
+      proporcaoY * zoom -
+      areaLeitor.clientHeight / 2
+    );
 
 }
 
