@@ -1,204 +1,244 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
 
 <meta charset="UTF-8">
 
 <meta
   name="viewport"
-  content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"
+  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
 >
 
 <title>MegaHQ Online</title>
 
+<!-- ADMAVEN - VERIFICAÇÃO -->
+<meta name="admaven-placement" content="BrHr6rTs4">
+
+<!-- MONETAG - VERIFICAÇÃO -->
 <meta
-  name="admaven-placement"
-  content="BrHr6rTs4"
+  name="monetag"
+  content="c0572af66e0fb19fa53dc55faaca3da8"
 >
 
 <style>
 
-*{
-  box-sizing:border-box;
+* {
+  box-sizing: border-box;
 }
 
 html,
-body{
-  margin:0;
-  padding:0;
-  width:100%;
-  min-height:100%;
-  background:#111;
-  overflow-x:hidden;
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: #111;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
 }
 
-body{
-  font-family:Arial,sans-serif;
+/* =========================
+   BARRA DE CONTROLES
+========================= */
+
+#barra {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 55px;
+
+  background: #181818;
+  color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  z-index: 99999;
+
+  border-bottom: 1px solid #333;
 }
 
-/* BARRA */
+.botao {
+  border: none;
+  background: #2a2a2a;
+  color: white;
 
-#barra{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:55px;
-  background:#1c1c1c;
-  color:white;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  z-index:1000;
-  box-shadow:0 2px 8px rgba(0,0,0,0.5);
+  min-width: 42px;
+  height: 38px;
+
+  padding: 0 12px;
+
+  border-radius: 6px;
+
+  font-size: 20px;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-#barra button{
-  height:36px;
-  min-width:36px;
-  border:none;
-  border-radius:5px;
-  background:#333;
-  color:white;
-  font-size:18px;
-  cursor:pointer;
+.botao:hover {
+  background: #3a3a3a;
 }
 
-#barra button:hover{
-  background:#444;
+#zoomTexto {
+  min-width: 62px;
+  text-align: center;
+  font-size: 14px;
+  color: #ddd;
 }
 
-#zoomTexto{
-  min-width:55px;
-  text-align:center;
-  font-size:14px;
+/* =========================
+   ÁREA DO LEITOR
+========================= */
+
+#areaLeitor {
+  position: absolute;
+
+  top: 55px;
+  left: 0;
+
+  width: 100%;
+  height: calc(100% - 55px);
+
+  overflow: auto;
+
+  background: #111;
+
+  text-align: center;
+
+  -webkit-overflow-scrolling: touch;
 }
 
-#fullscreen{
-  font-size:20px;
+#mobileStage {
+  width: max-content;
+  min-width: 100%;
+
+  min-height: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  padding: 20px;
 }
 
-#download{
-  font-size:19px;
+#leitor {
+  transform-origin: center top;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: max-content;
 }
 
-#download:disabled{
-  opacity:0.5;
-  cursor:default;
+#leitor canvas {
+  display: block;
+
+  margin: 0 auto 12px auto;
+
+  background: white;
+
+  box-shadow: 0 2px 8px rgba(0,0,0,.45);
 }
 
-/* LEITOR */
+/* =========================
+   TELA CHEIA
+========================= */
 
-#areaLeitor{
-  margin-top:50px;
-  width:100vw;
-  margin-left:0;
-  height:calc(100vh - 50px);
-  overflow:auto;
-  touch-action:pan-x pan-y;
-  -webkit-overflow-scrolling:touch;
-  overscroll-behavior:contain;
+#areaLeitor.fullscreen {
+  top: 0;
+  height: 100%;
 }
 
-#mobileStage{
-  position:relative;
-  width:max-content;
-  min-width:100%;
-  min-height:100%;
+#areaLeitor.fullscreen #mobileStage {
+  padding-top: 20px;
 }
 
-#leitor{
-  width:max-content;
-  min-width:100%;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:10px;
-  padding:20px;
-  transform-origin:center top;
+#btnSairFullscreen {
+  display: none;
+
+  position: fixed;
+
+  top: 10px;
+  right: 10px;
+
+  z-index: 100000;
+
+  border: none;
+
+  background: rgba(0,0,0,.75);
+
+  color: white;
+
+  width: 42px;
+  height: 42px;
+
+  border-radius: 50%;
+
+  font-size: 20px;
+
+  cursor: pointer;
 }
 
-canvas{
-  display:block;
-  max-width:none;
-  height:auto;
-  background:white;
-  box-shadow:0 2px 8px rgba(0,0,0,0.5);
-  user-select:none;
-  -webkit-user-select:none;
-  -webkit-touch-callout:none;
-  image-rendering:auto;
-}
+/* =========================
+   MOBILE
+========================= */
 
-/* DESKTOP */
+@media (max-width: 700px) {
 
-@media (min-width:769px){
-
-  #areaLeitor{
-    overflow:auto;
+  #barra {
+    height: 50px;
+    gap: 5px;
   }
 
-}
-
-/* CELULAR */
-
-@media (max-width:768px){
-
-  #barra{
-    height:50px;
+  .botao {
+    min-width: 38px;
+    height: 36px;
+    padding: 0 9px;
+    font-size: 18px;
   }
 
-  #menosZoom,
-  #maisZoom,
-  #zoomTexto,
-  #zoom100{
-    display:none;
+  #zoomTexto {
+    min-width: 55px;
+    font-size: 13px;
   }
 
-  #areaLeitor{
-    margin-top:50px;
-    width:100vw;
-    margin-left:0;
-    height:calc(100vh - 50px);
-    overflow:auto;
-    touch-action:pan-x pan-y;
-    -webkit-overflow-scrolling:touch;
+  #areaLeitor {
+    top: 50px;
+    height: calc(100% - 50px);
+
+    overflow: auto;
   }
 
-  #mobileStage{
-    width:100%;
-    min-height:100%;
+  #mobileStage {
+    display: block;
+
+    width: max-content;
+    min-width: 100%;
+
+    padding: 10px;
   }
 
-  #leitor{
-    padding:0;
-    gap:0;
-    align-items:flex-start;
-    min-width:0;
-    width:100%;
-    transform-origin:0 0;
+  #leitor {
+    transform-origin: 0 0;
+
+    display: block;
+
+    width: max-content;
   }
 
-  canvas{
-    width:100vw;
-    max-width:none;
-    height:auto;
-    box-shadow:none;
+  #leitor canvas {
+    margin-left: 0;
+    margin-right: 0;
   }
 
-}
-
-/* TELA CHEIA */
-
-:fullscreen #barra{
-  display:flex;
-}
-
-:fullscreen #areaLeitor{
-  margin-top:55px;
-  height:calc(100vh - 55px);
 }
 
 </style>
@@ -207,10 +247,15 @@ canvas{
 
 <body>
 
+<!-- =========================
+     BARRA
+========================= -->
+
 <div id="barra">
 
   <button
-    id="menosZoom"
+    id="btnMenos"
+    class="botao"
     title="Diminuir zoom"
   >
     −
@@ -221,29 +266,32 @@ canvas{
   </span>
 
   <button
-    id="maisZoom"
+    id="btnMais"
+    class="botao"
     title="Aumentar zoom"
   >
     +
   </button>
 
   <button
-    id="zoom100"
-    title="Voltar para 100%"
+    id="btnReset"
+    class="botao"
+    title="Zoom 100%"
   >
     100%
   </button>
 
   <button
-    id="download"
+    id="btnDownload"
+    class="botao"
     title="Baixar HQ"
-    disabled
   >
     ⇩
   </button>
 
   <button
-    id="fullscreen"
+    id="btnFullscreen"
+    class="botao"
     title="Tela cheia"
   >
     ⛶
@@ -251,6 +299,9 @@ canvas{
 
 </div>
 
+<!-- =========================
+     LEITOR
+========================= -->
 
 <div id="areaLeitor">
 
@@ -262,24 +313,34 @@ canvas{
 
 </div>
 
+<button
+  id="btnSairFullscreen"
+  title="Sair da tela cheia"
+>
+  ✕
+</button>
 
-<script
-  src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs"
-  type="module"
-></script>
+<!-- =========================
+     PDF.JS
+========================= -->
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs" type="module"></script>
 
 <script type="module">
 
 import * as pdfjsLib from
-"https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs";
-
+"https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
-"https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs";
+"https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs";
 
 
-/* ELEMENTOS */
+/* =========================
+   ELEMENTOS
+========================= */
+
+const leitor =
+document.getElementById("leitor");
 
 const areaLeitor =
 document.getElementById("areaLeitor");
@@ -287,822 +348,628 @@ document.getElementById("areaLeitor");
 const mobileStage =
 document.getElementById("mobileStage");
 
-const leitor =
-document.getElementById("leitor");
-
-const menosZoom =
-document.getElementById("menosZoom");
-
-const maisZoom =
-document.getElementById("maisZoom");
-
 const zoomTexto =
 document.getElementById("zoomTexto");
 
-const zoom100 =
-document.getElementById("zoom100");
+const btnMenos =
+document.getElementById("btnMenos");
 
-const fullscreen =
-document.getElementById("fullscreen");
+const btnMais =
+document.getElementById("btnMais");
 
-const download =
-document.getElementById("download");
+const btnReset =
+document.getElementById("btnReset");
+
+const btnDownload =
+document.getElementById("btnDownload");
+
+const btnFullscreen =
+document.getElementById("btnFullscreen");
+
+const btnSairFullscreen =
+document.getElementById("btnSairFullscreen");
 
 
-/* CONFIGURAÇÕES */
-
-let zoom = 0.5;
-
-const passoZoom = 0.10;
-
-/*
-  O zoom mínimo agora é 20%.
-  O zoom inicial continua sendo 50%.
-*/
+/* =========================
+   CONFIGURAÇÕES
+========================= */
 
 const zoomMinimo = 0.2;
 
 const zoomMaximo = 3.0;
 
-let mobileScale = 1;
+const passoZoom = 0.10;
 
-const mobileScaleMin = 1;
+let zoom = 0.5;
 
-const mobileScaleMax = 4;
-
-let pdf = null;
+let pdfAtual = null;
 
 let urlPDFAtual = "";
 
-let nomeArquivoDownload = "MegaHQ.pdf";
 
+/* =========================
+   URL DO WORKER
+========================= */
 
-/* MOBILE */
+const workerURL =
+"https://polished-term-e56bmega-leitor-proxy.megahqwix.workers.dev/?id=";
 
-function ehMobile(){
 
-  return window.innerWidth <= 768;
+/* =========================
+   OBTÉM O PDF PELA URL
+========================= */
 
-}
+function obterPDF() {
 
+  const parametros =
+  new URLSearchParams(window.location.search);
 
-/* ESCALA DESKTOP */
+  const id =
+  parametros.get("id");
 
-function calcularEscalaDesktop(){
+  const pdf =
+  parametros.get("pdf");
 
-  const larguraDisponivel =
-  window.innerWidth * 0.80;
+  /*
+    ?id=...
+    Google Drive através do Worker
+  */
 
-  return larguraDisponivel / 1000;
+  if (id) {
 
-}
+    return {
+      url:
+        workerURL +
+        encodeURIComponent(id),
 
+      download:
+        workerURL +
+        encodeURIComponent(id),
 
-/* RENDER DESKTOP */
-
-async function renderizarPaginaDesktop(
-  page,
-  numeroPagina
-){
-
-  const escalaBase =
-  calcularEscalaDesktop();
-
-  const escalaFinal =
-  escalaBase * zoom;
-
-  const viewport =
-  page.getViewport({
-    scale:escalaFinal
-  });
-
-  const canvas =
-  document.createElement("canvas");
-
-  const contexto =
-  canvas.getContext("2d");
-
-  const pixelRatio =
-  Math.min(
-    window.devicePixelRatio || 1,
-    2
-  );
-
-  canvas.width =
-  Math.floor(
-    viewport.width * pixelRatio
-  );
-
-  canvas.height =
-  Math.floor(
-    viewport.height * pixelRatio
-  );
-
-  canvas.style.width =
-  viewport.width + "px";
-
-  canvas.style.height =
-  viewport.height + "px";
-
-  await page.render({
-
-    canvasContext:contexto,
-
-    viewport:viewport,
-
-    transform:
-      pixelRatio !== 1
-      ? [
-          pixelRatio,
-          0,
-          0,
-          pixelRatio,
-          0,
-          0
-        ]
-      : null
-
-  }).promise;
-
-  leitor.appendChild(canvas);
-
-}
-
-
-/* RENDER MOBILE */
-
-async function renderizarPaginaMobile(page){
-
-  const viewportOriginal =
-  page.getViewport({
-    scale:1
-  });
-
-  const larguraTela =
-  areaLeitor.clientWidth;
-
-  const escalaVisual =
-  larguraTela /
-  viewportOriginal.width;
-
-  const pixelRatio =
-  Math.min(
-    Math.max(
-      window.devicePixelRatio || 1,
-      2
-    ),
-    3
-  );
-
-  const viewport =
-  page.getViewport({
-    scale:escalaVisual
-  });
-
-  const canvas =
-  document.createElement("canvas");
-
-  const contexto =
-  canvas.getContext("2d");
-
-  canvas.width =
-  Math.floor(
-    viewport.width * pixelRatio
-  );
-
-  canvas.height =
-  Math.floor(
-    viewport.height * pixelRatio
-  );
-
-  canvas.style.width =
-  viewport.width + "px";
-
-  canvas.style.height =
-  viewport.height + "px";
-
-  await page.render({
-
-    canvasContext:contexto,
-
-    viewport:viewport,
-
-    transform:[
-      pixelRatio,
-      0,
-      0,
-      pixelRatio,
-      0,
-      0
-    ]
-
-  }).promise;
-
-  leitor.appendChild(canvas);
-
-}
-
-
-/* RENDER PDF */
-
-async function renderizarPDF(){
-
-  leitor.innerHTML="";
-
-  mobileStage.style.transform="";
-
-  mobileScale=1;
-
-
-  if(ehMobile()){
-
-    for(
-      let i=1;
-      i<=pdf.numPages;
-      i++
-    ){
-
-      const page =
-      await pdf.getPage(i);
-
-      await renderizarPaginaMobile(page);
-
-    }
-
-    atualizarMobileStage();
-
-    return;
+      tipo:
+        "worker"
+    };
 
   }
 
 
-  for(
-    let i=1;
-    i<=pdf.numPages;
-    i++
-  ){
+  /*
+    ?pdf=...
+    PDF armazenado diretamente no GitHub
+  */
 
-    const page =
-    await pdf.getPage(i);
+  if (pdf) {
 
-    await renderizarPaginaDesktop(
-      page,
-      i
-    );
+    return {
+      url:
+        pdf,
 
-  }
+      download:
+        pdf,
 
-
-  const larguraHQ =
-  leitor.scrollWidth;
-
-  const larguraTela =
-  areaLeitor.clientWidth;
-
-
-  if(larguraHQ > larguraTela){
-
-    areaLeitor.scrollLeft =
-    (larguraHQ - larguraTela) / 2;
-
-  }else{
-
-    areaLeitor.scrollLeft = 0;
+      tipo:
+        "local"
+    };
 
   }
 
-}
 
-
-/* MOBILE STAGE */
-
-function atualizarMobileStage(){
-
-  if(!ehMobile()) return;
-
-
-  const larguraBase =
-  leitor.scrollWidth;
-
-  const alturaBase =
-  leitor.scrollHeight;
-
-
-  mobileStage.style.width =
-  Math.max(
-    areaLeitor.clientWidth,
-    larguraBase * mobileScale
-  ) + "px";
-
-
-  mobileStage.style.height =
-  Math.max(
-    areaLeitor.clientHeight,
-    alturaBase * mobileScale
-  ) + "px";
-
-
-  leitor.style.transform =
-  `scale(${mobileScale})`;
-
-}
-
-
-/* ZOOM MOBILE */
-
-function aplicarZoomMobile(
-  novaEscala,
-  centroX,
-  centroY
-){
-
-  novaEscala =
-  Math.max(
-    mobileScaleMin,
-    Math.min(
-      mobileScaleMax,
-      novaEscala
-    )
-  );
-
-
-  const escalaAnterior =
-  mobileScale;
-
-
-  const pontoX =
-  (
-    areaLeitor.scrollLeft +
-    centroX
-  ) / escalaAnterior;
-
-
-  const pontoY =
-  (
-    areaLeitor.scrollTop +
-    centroY
-  ) / escalaAnterior;
-
-
-  mobileScale =
-  novaEscala;
-
-
-  atualizarMobileStage();
-
-
-  let novoScrollX =
-  pontoX * mobileScale -
-  centroX;
-
-
-  let novoScrollY =
-  pontoY * mobileScale -
-  centroY;
-
-
-  const maxScrollX =
-  Math.max(
-    0,
-    areaLeitor.scrollWidth -
-    areaLeitor.clientWidth
-  );
-
-
-  const maxScrollY =
-  Math.max(
-    0,
-    areaLeitor.scrollHeight -
-    areaLeitor.clientHeight
-  );
-
-
-  novoScrollX =
-  Math.max(
-    0,
-    Math.min(
-      novoScrollX,
-      maxScrollX
-    )
-  );
-
-
-  novoScrollY =
-  Math.max(
-    0,
-    Math.min(
-      novoScrollY,
-      maxScrollY
-    )
-  );
-
-
-  areaLeitor.scrollLeft =
-  novoScrollX;
-
-  areaLeitor.scrollTop =
-  novoScrollY;
-
-}
-
-
-/* PINCH */
-
-let pinchAtivo = false;
-
-let distanciaInicial = 0;
-
-let escalaInicialPinch = 1;
-
-
-function distanciaEntreDedos(
-  touch1,
-  touch2
-){
-
-  const dx =
-  touch2.clientX -
-  touch1.clientX;
-
-  const dy =
-  touch2.clientY -
-  touch1.clientY;
-
-  return Math.sqrt(
-    dx * dx +
-    dy * dy
-  );
-
-}
-
-
-function centroDosDedos(
-  touch1,
-  touch2
-){
+  /*
+    Caso não exista parâmetro,
+    abre o PDF padrão.
+  */
 
   return {
 
-    x:
-      (
-        touch1.clientX +
-        touch2.clientX
-      ) / 2,
+    url:
+      "UBS CIDADE LUZ PREVIAS.pdf",
 
-    y:
-      (
-        touch1.clientY +
-        touch2.clientY
-      ) / 2
+    download:
+      "UBS CIDADE LUZ PREVIAS.pdf",
 
+    tipo:
+      "local"
   };
 
 }
 
 
-areaLeitor.addEventListener(
-  "touchstart",
-  function(event){
+/* =========================
+   CARREGAR PDF
+========================= */
 
-    if(!ehMobile()) return;
+async function carregarPDF() {
 
+  const dados =
+  obterPDF();
 
-    if(event.touches.length === 2){
+  urlPDFAtual =
+  dados.url;
 
-      pinchAtivo = true;
+  leitor.innerHTML = "";
 
-      const t1 =
-      event.touches[0];
+  try {
 
-      const t2 =
-      event.touches[1];
+    const loadingTask =
+    pdfjsLib.getDocument({
+      url: dados.url,
+      withCredentials: false
+    });
 
-      distanciaInicial =
-      distanciaEntreDedos(
-        t1,
-        t2
+    pdfAtual =
+    await loadingTask.promise;
+
+    console.log(
+      "PDF carregado:",
+      pdfAtual.numPages,
+      "páginas"
+    );
+
+    for (
+      let numeroPagina = 1;
+      numeroPagina <= pdfAtual.numPages;
+      numeroPagina++
+    ) {
+
+      await renderizarPagina(
+        numeroPagina
       );
 
-      escalaInicialPinch =
-      mobileScale;
-
     }
 
-  },
-  {
-    passive:true
-  }
-);
+    atualizarZoom();
 
+  } catch (erro) {
 
-areaLeitor.addEventListener(
-  "touchmove",
-  function(event){
+    console.error(erro);
 
-    if(!ehMobile()) return;
+    leitor.innerHTML = `
 
-    if(
-      event.touches.length !== 2 ||
-      !pinchAtivo
-    ){
+      <div style="
+        color:white;
+        padding:40px;
+        max-width:700px;
+        margin:auto;
+        font-family:Arial;
+      ">
 
-      return;
+        <h2>
+          Não foi possível carregar a HQ.
+        </h2>
 
-    }
+        <p>
+          Verifique se o arquivo está disponível
+          e se o link do Google Drive está correto.
+        </p>
 
+      </div>
 
-    event.preventDefault();
-
-
-    const t1 =
-    event.touches[0];
-
-    const t2 =
-    event.touches[1];
-
-
-    const distanciaAtual =
-    distanciaEntreDedos(
-      t1,
-      t2
-    );
-
-
-    if(distanciaInicial <= 0)
-      return;
-
-
-    const fator =
-    distanciaAtual /
-    distanciaInicial;
-
-
-    const novaEscala =
-    escalaInicialPinch *
-    fator;
-
-
-    const centro =
-    centroDosDedos(
-      t1,
-      t2
-    );
-
-
-    const rect =
-    areaLeitor.getBoundingClientRect();
-
-
-    const centroX =
-    centro.x -
-    rect.left;
-
-
-    const centroY =
-    centro.y -
-    rect.top;
-
-
-    aplicarZoomMobile(
-      novaEscala,
-      centroX,
-      centroY
-    );
-
-  },
-  {
-    passive:false
-  }
-);
-
-
-areaLeitor.addEventListener(
-  "touchend",
-  function(event){
-
-    if(!ehMobile()) return;
-
-
-    if(event.touches.length < 2){
-
-      pinchAtivo = false;
-
-      distanciaInicial = 0;
-
-    }
-
-  },
-  {
-    passive:true
-  }
-);
-
-
-areaLeitor.addEventListener(
-  "touchcancel",
-  function(){
-
-    pinchAtivo = false;
-
-    distanciaInicial = 0;
+    `;
 
   }
-);
-
-
-/* ZOOM DESKTOP */
-
-async function atualizarZoomDesktop(){
-
-  if(ehMobile()) return;
-
-
-  const centroX =
-  areaLeitor.scrollLeft +
-  areaLeitor.clientWidth / 2;
-
-
-  const centroY =
-  areaLeitor.scrollTop +
-  areaLeitor.clientHeight / 2;
-
-
-  const proporcaoX =
-  centroX / zoom;
-
-
-  const proporcaoY =
-  centroY / zoom;
-
-
-  zoom =
-  Math.max(
-    zoomMinimo,
-    Math.min(
-      zoomMaximo,
-      zoom
-    )
-  );
-
-
-  zoomTexto.textContent =
-  Math.round(zoom * 100) + "%";
-
-
-  await renderizarPDF();
-
-
-  const larguraHQ =
-  leitor.scrollWidth;
-
-  const alturaHQ =
-  leitor.scrollHeight;
-
-
-  mobileStage.style.width =
-  Math.max(
-    areaLeitor.clientWidth,
-    larguraHQ
-  ) + "px";
-
-
-  mobileStage.style.height =
-  Math.max(
-    areaLeitor.clientHeight,
-    alturaHQ
-  ) + "px";
-
-
-  const novoCentroX =
-  proporcaoX * zoom;
-
-
-  const novoCentroY =
-  proporcaoY * zoom;
-
-
-  if(
-    larguraHQ <=
-    areaLeitor.clientWidth
-  ){
-
-    areaLeitor.scrollLeft = 0;
-
-  }else{
-
-    areaLeitor.scrollLeft =
-    Math.max(
-      0,
-      Math.min(
-        novoCentroX -
-        areaLeitor.clientWidth / 2,
-        areaLeitor.scrollWidth -
-        areaLeitor.clientWidth
-      )
-    );
-
-  }
-
-
-  areaLeitor.scrollTop =
-  Math.max(
-    0,
-    Math.min(
-      novoCentroY -
-      areaLeitor.clientHeight / 2,
-      areaLeitor.scrollHeight -
-      areaLeitor.clientHeight
-    )
-  );
 
 }
 
 
-/* BOTÕES DE ZOOM */
+/* =========================
+   RENDERIZAR PÁGINA
+========================= */
 
-menosZoom.addEventListener(
-  "click",
-  function(){
+async function renderizarPagina(
+  numeroPagina
+) {
 
-    if(ehMobile()) return;
+  const pagina =
+  await pdfAtual.getPage(
+    numeroPagina
+  );
 
-    zoom -= passoZoom;
+  const viewport =
+  pagina.getViewport({
+    scale: 1
+  });
+
+  const canvas =
+  document.createElement("canvas");
+
+  const contexto =
+  canvas.getContext("2d");
+
+  canvas.width =
+  viewport.width;
+
+  canvas.height =
+  viewport.height;
+
+  canvas.dataset.originalWidth =
+  viewport.width;
+
+  canvas.dataset.originalHeight =
+  viewport.height;
+
+  leitor.appendChild(canvas);
+
+  await pagina.render({
+    canvasContext: contexto,
+    viewport: viewport
+  }).promise;
+
+}
+
+
+/* =========================
+   ZOOM
+========================= */
+
+function atualizarZoom() {
+
+  zoomTexto.textContent =
+    Math.round(zoom * 100) + "%";
+
+
+  if (
+    window.innerWidth <= 700
+  ) {
+
+    atualizarZoomMobile();
+
+  } else {
 
     atualizarZoomDesktop();
+
+  }
+
+}
+
+
+/* =========================
+   ZOOM DESKTOP
+========================= */
+
+function atualizarZoomDesktop() {
+
+  const scrollTopAntes =
+    areaLeitor.scrollTop;
+
+  const scrollLeftAntes =
+    areaLeitor.scrollLeft;
+
+  const larguraAntes =
+    leitor.getBoundingClientRect().width;
+
+  const alturaAntes =
+    leitor.getBoundingClientRect().height;
+
+
+  leitor.style.transform =
+    `scale(${zoom})`;
+
+
+  const larguraDepois =
+    leitor.getBoundingClientRect().width;
+
+  const alturaDepois =
+    leitor.getBoundingClientRect().height;
+
+
+  /*
+    Mantém aproximadamente o ponto
+    que estava no centro da tela.
+  */
+
+  const centroX =
+    scrollLeftAntes +
+    areaLeitor.clientWidth / 2;
+
+  const centroY =
+    scrollTopAntes +
+    areaLeitor.clientHeight / 2;
+
+
+  if (larguraAntes > 0) {
+
+    const proporcaoX =
+      larguraDepois /
+      larguraAntes;
+
+    areaLeitor.scrollLeft =
+      centroX * proporcaoX -
+      areaLeitor.clientWidth / 2;
+
+  }
+
+
+  if (alturaAntes > 0) {
+
+    const proporcaoY =
+      alturaDepois /
+      alturaAntes;
+
+    areaLeitor.scrollTop =
+      centroY * proporcaoY -
+      areaLeitor.clientHeight / 2;
+
+  }
+
+
+  /*
+    Centraliza horizontalmente quando
+    a HQ é menor que a área disponível.
+  */
+
+  const larguraHQ =
+    leitor.scrollWidth *
+    zoom;
+
+  const larguraTela =
+    areaLeitor.clientWidth;
+
+
+  if (
+    larguraHQ <= larguraTela
+  ) {
+
+    areaLeitor.scrollLeft = 0;
+
+  }
+
+}
+
+
+/* =========================
+   ZOOM MOBILE
+========================= */
+
+let escalaMobile = 1;
+
+let toqueInicial = null;
+
+let distanciaInicial = null;
+
+
+function atualizarZoomMobile() {
+
+  leitor.style.transform =
+    `scale(${escalaMobile})`;
+
+}
+
+
+/* =========================
+   BOTÕES DE ZOOM
+========================= */
+
+btnMenos.addEventListener(
+  "click",
+  () => {
+
+    zoom =
+      Math.max(
+        zoomMinimo,
+        Number(
+          (zoom - passoZoom)
+          .toFixed(2)
+        )
+      );
+
+    atualizarZoom();
 
   }
 );
 
 
-maisZoom.addEventListener(
+btnMais.addEventListener(
   "click",
-  function(){
+  () => {
 
-    if(ehMobile()) return;
+    zoom =
+      Math.min(
+        zoomMaximo,
+        Number(
+          (zoom + passoZoom)
+          .toFixed(2)
+        )
+      );
 
-    zoom += passoZoom;
-
-    atualizarZoomDesktop();
+    atualizarZoom();
 
   }
 );
 
 
-zoom100.addEventListener(
+btnReset.addEventListener(
   "click",
-  function(){
-
-    if(ehMobile()) return;
+  () => {
 
     zoom = 1;
 
-    atualizarZoomDesktop();
+    if (
+      window.innerWidth <= 700
+    ) {
+
+      escalaMobile = 1;
+
+      atualizarZoom();
+
+    } else {
+
+      atualizarZoom();
+
+    }
 
   }
 );
 
 
-/* DOWNLOAD */
+/* =========================
+   FULLSCREEN
+========================= */
 
-download.addEventListener(
+btnFullscreen.addEventListener(
   "click",
-  function(){
+  async () => {
 
-    if(!urlPDFAtual)
+    try {
+
+      if (
+        areaLeitor.requestFullscreen
+      ) {
+
+        await areaLeitor.requestFullscreen();
+
+      }
+
+    } catch (erro) {
+
+      console.error(
+        "Fullscreen:",
+        erro
+      );
+
+    }
+
+  }
+);
+
+
+btnSairFullscreen.addEventListener(
+  "click",
+  async () => {
+
+    if (
+      document.fullscreenElement
+    ) {
+
+      await document.exitFullscreen();
+
+    }
+
+  }
+);
+
+
+document.addEventListener(
+  "fullscreenchange",
+  () => {
+
+    const ativo =
+      document.fullscreenElement ===
+      areaLeitor;
+
+    if (ativo) {
+
+      areaLeitor.classList.add(
+        "fullscreen"
+      );
+
+      btnSairFullscreen.style.display =
+        "flex";
+
+      btnSairFullscreen.style.alignItems =
+        "center";
+
+      btnSairFullscreen.style.justifyContent =
+        "center";
+
+      btnFullscreen.style.display =
+        "none";
+
+      document.body.style.overflow =
+        "hidden";
+
+    } else {
+
+      areaLeitor.classList.remove(
+        "fullscreen"
+      );
+
+      btnSairFullscreen.style.display =
+        "none";
+
+      btnFullscreen.style.display =
+        "flex";
+
+      document.body.style.overflow =
+        "hidden";
+
+    }
+
+  }
+);
+
+
+/* =========================
+   ESC PARA SAIR
+========================= */
+
+document.addEventListener(
+  "keydown",
+  (evento) => {
+
+    if (
+      evento.key === "Escape" &&
+      document.fullscreenElement
+    ) {
+
+      document.exitFullscreen();
+
+    }
+
+  }
+);
+
+
+/* =========================
+   DOWNLOAD
+========================= */
+
+btnDownload.addEventListener(
+  "click",
+  () => {
+
+    if (!urlPDFAtual) {
       return;
+    }
 
 
-    if(
+    /*
+      Arquivo vindo do Google Drive
+      através do Cloudflare Worker.
+    */
+
+    if (
       urlPDFAtual.includes(
-        "polished-term-e56bmega-leitor-proxy.megahqwix.workers.dev"
+        "polished-term-e56bmega-leitor-proxy.megahqw.workers.dev"
       )
-    ){
+    ) {
 
       const urlDownload =
         urlPDFAtual +
         "&download=1";
 
-
       window.location.href =
-      urlDownload;
-
+        urlDownload;
 
       return;
 
     }
 
 
+    /*
+      Arquivo local do GitHub.
+    */
+
     const link =
-    document.createElement("a");
+      document.createElement("a");
 
     link.href =
-    urlPDFAtual;
+      urlPDFAtual;
 
     link.download =
-    nomeArquivoDownload;
-
-    link.target =
-    "_blank";
+      urlPDFAtual
+      .split("/")
+      .pop()
+      .split("?")[0];
 
     document.body.appendChild(link);
 
@@ -1114,324 +981,148 @@ download.addEventListener(
 );
 
 
-/* TELA CHEIA */
-
-fullscreen.addEventListener(
-  "click",
-  async function(){
-
-    try{
-
-      if(!document.fullscreenElement){
-
-        await document.documentElement.requestFullscreen();
-
-        fullscreen.textContent =
-        "✕";
-
-      }else{
-
-        await document.exitFullscreen();
-
-        fullscreen.textContent =
-        "⛶";
-
-      }
-
-    }catch(erro){
-
-      console.error(
-        "Erro ao abrir tela cheia:",
-        erro
-      );
-
-    }
-
-  }
-);
-
-
-document.addEventListener(
-  "fullscreenchange",
-  function(){
-
-    if(document.fullscreenElement){
-
-      fullscreen.textContent =
-      "✕";
-
-    }else{
-
-      fullscreen.textContent =
-      "⛶";
-
-    }
-
-  }
-);
-
-
-/* ARRASTAR DESKTOP */
-
-let arrastando = false;
-
-let inicioX = 0;
-
-let inicioY = 0;
-
-let scrollInicialX = 0;
-
-let scrollInicialY = 0;
-
-
-areaLeitor.addEventListener(
-  "mousedown",
-  function(event){
-
-    if(ehMobile()) return;
-
-    if(zoom <= 1) return;
-
-
-    arrastando = true;
-
-    inicioX =
-    event.clientX;
-
-    inicioY =
-    event.clientY;
-
-
-    scrollInicialX =
-    areaLeitor.scrollLeft;
-
-    scrollInicialY =
-    areaLeitor.scrollTop;
-
-
-    areaLeitor.style.cursor =
-    "grabbing";
-
-  }
-);
-
-
-window.addEventListener(
-  "mousemove",
-  function(event){
-
-    if(
-      !arrastando ||
-      ehMobile()
-    ){
-
-      return;
-
-    }
-
-
-    const deslocamentoX =
-    event.clientX -
-    inicioX;
-
-
-    const deslocamentoY =
-    event.clientY -
-    inicioY;
-
-
-    areaLeitor.scrollLeft =
-    scrollInicialX -
-    deslocamentoX;
-
-
-    areaLeitor.scrollTop =
-    scrollInicialY -
-    deslocamentoY;
-
-  }
-);
-
-
-window.addEventListener(
-  "mouseup",
-  function(){
-
-    if(!arrastando)
-      return;
-
-
-    arrastando = false;
-
-    areaLeitor.style.cursor =
-    "default";
-
-  }
-);
-
-
-/* REDIMENSIONAMENTO */
-
-let resizeTimer = null;
-
-
-window.addEventListener(
-  "resize",
-  function(){
-
-    clearTimeout(
-      resizeTimer
-    );
-
-
-    resizeTimer =
-    setTimeout(
-      function(){
-
-        renderizarPDF();
-
-      },
-      250
-    );
-
-  }
-);
-
-
-/* CARREGAR PDF */
-
-async function carregarPDF(){
-
-  const parametros =
-  new URLSearchParams(
-    window.location.search
+/* =========================
+   PINCH ZOOM MOBILE
+========================= */
+
+function distanciaToque(
+  toque1,
+  toque2
+) {
+
+  const dx =
+    toque1.clientX -
+    toque2.clientX;
+
+  const dy =
+    toque1.clientY -
+    toque2.clientY;
+
+  return Math.sqrt(
+    dx * dx +
+    dy * dy
   );
-
-
-  const id =
-  parametros.get("id");
-
-
-  const arquivo =
-  parametros.get("pdf");
-
-
-  if(id){
-
-    urlPDFAtual =
-      "https://polished-term-e56bmega-leitor-proxy.megahqwix.workers.dev/?id=" +
-      encodeURIComponent(id);
-
-
-    nomeArquivoDownload =
-      "MegaHQ-" +
-      id +
-      ".pdf";
-
-  }
-
-
-  else if(arquivo){
-
-    urlPDFAtual =
-      arquivo;
-
-
-    const nomeOriginal =
-      arquivo
-        .split("/")
-        .pop()
-        .split("?")[0];
-
-
-    nomeArquivoDownload =
-      nomeOriginal ||
-      "MegaHQ.pdf";
-
-  }
-
-
-  else{
-
-    urlPDFAtual =
-      "UBS CIDADE LUZ PREVIAS.pdf";
-
-
-    nomeArquivoDownload =
-      "UBS CIDADE LUZ PREVIAS.pdf";
-
-  }
-
-
-  download.disabled = false;
-
-
-  try{
-
-    pdf =
-      await pdfjsLib
-      .getDocument(
-        urlPDFAtual
-      )
-      .promise;
-
-
-    await renderizarPDF();
-
-
-  }catch(erro){
-
-    console.error(
-      "Erro ao carregar PDF:",
-      erro
-    );
-
-
-    download.disabled = true;
-
-
-    leitor.innerHTML = "";
-
-
-    const mensagem =
-    document.createElement(
-      "div"
-    );
-
-
-    mensagem.style.color =
-    "white";
-
-
-    mensagem.style.padding =
-    "30px";
-
-
-    mensagem.style.fontSize =
-    "18px";
-
-
-    mensagem.textContent =
-    "Não foi possível carregar o PDF.";
-
-
-    leitor.appendChild(
-      mensagem
-    );
-
-  }
 
 }
 
 
-/* INICIAR */
+areaLeitor.addEventListener(
+  "touchstart",
+  (evento) => {
+
+    if (
+      evento.touches.length === 2
+    ) {
+
+      distanciaInicial =
+        distanciaToque(
+          evento.touches[0],
+          evento.touches[1]
+        );
+
+      escalaMobileAtual =
+        escalaMobile;
+
+    }
+
+  },
+  {
+    passive: true
+  }
+);
+
+
+let escalaMobileAtual = 1;
+
+
+areaLeitor.addEventListener(
+  "touchmove",
+  (evento) => {
+
+    if (
+      evento.touches.length === 2 &&
+      window.innerWidth <= 700
+    ) {
+
+      const distanciaAtual =
+        distanciaToque(
+          evento.touches[0],
+          evento.touches[1]
+        );
+
+      if (
+        distanciaInicial
+      ) {
+
+        const fator =
+          distanciaAtual /
+          distanciaInicial;
+
+        escalaMobile =
+          Math.min(
+            4,
+            Math.max(
+              1,
+              escalaMobileAtual *
+              fator
+            )
+          );
+
+        atualizarZoomMobile();
+
+      }
+
+      evento.preventDefault();
+
+    }
+
+  },
+  {
+    passive: false
+  }
+);
+
+
+areaLeitor.addEventListener(
+  "touchend",
+  () => {
+
+    distanciaInicial =
+      null;
+
+  },
+  {
+    passive: true
+  }
+);
+
+
+/* =========================
+   REDIMENSIONAMENTO
+========================= */
+
+window.addEventListener(
+  "resize",
+  () => {
+
+    atualizarZoom();
+
+  }
+);
+
+
+/* =========================
+   INICIAR
+========================= */
 
 carregarPDF();
 
 </script>
 
 
-<!-- ADMAVEN - IN PAGE PUSH -->
+<!-- =========================
+     ADMAVEN - IN PAGE PUSH
+========================= -->
 
 <script
   data-cfasync="false"
@@ -1440,5 +1131,4 @@ carregarPDF();
 
 
 </body>
-
 </html>
