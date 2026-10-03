@@ -85,6 +85,19 @@ body {
 }
 
 /* =========================
+   BOTÃO DOWNLOAD
+========================= */
+
+#download {
+  font-size: 19px;
+}
+
+#download:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* =========================
    ÁREA DO LEITOR
 ========================= */
 
@@ -298,6 +311,10 @@ canvas {
     100%
   </button>
 
+  <button id="download" title="Baixar HQ" disabled>
+    ⇩
+  </button>
+
   <button id="fullscreen" title="Tela cheia">
     ⛶
   </button>
@@ -352,6 +369,7 @@ const maisZoom = document.getElementById("maisZoom");
 const zoomTexto = document.getElementById("zoomTexto");
 const zoom100 = document.getElementById("zoom100");
 const fullscreen = document.getElementById("fullscreen");
+const download = document.getElementById("download");
 
 
 /* =========================================================
@@ -382,6 +400,15 @@ const mobileScaleMax = 4;
 ========================================================= */
 
 let pdf = null;
+
+
+/* =========================================================
+   URL DO PDF ATUAL
+========================================================= */
+
+let urlPDFAtual = "";
+
+let nomeArquivoDownload = "MegaHQ.pdf";
 
 
 /* =========================================================
@@ -1057,10 +1084,6 @@ async function atualizarZoomDesktop() {
   }
 
 
-  /*
-    Guardamos o centro atualmente visível.
-  */
-
   const centroX =
     areaLeitor.scrollLeft +
     areaLeitor.clientWidth / 2;
@@ -1070,21 +1093,12 @@ async function atualizarZoomDesktop() {
     areaLeitor.clientHeight / 2;
 
 
-  /*
-    Guardamos a posição proporcional
-    em relação ao zoom atual.
-  */
-
   const proporcaoX =
     centroX / zoom;
 
   const proporcaoY =
     centroY / zoom;
 
-
-  /*
-    Aplica o novo zoom.
-  */
 
   zoom =
     Math.max(
@@ -1102,16 +1116,8 @@ async function atualizarZoomDesktop() {
     ) + "%";
 
 
-  /*
-    Renderiza novamente.
-  */
-
   await renderizarPDF();
 
-
-  /*
-    Descobre o tamanho final da HQ.
-  */
 
   const larguraHQ =
     leitor.scrollWidth;
@@ -1119,10 +1125,6 @@ async function atualizarZoomDesktop() {
   const alturaHQ =
     leitor.scrollHeight;
 
-
-  /*
-    Stage acompanha o tamanho da HQ.
-  */
 
   mobileStage.style.width =
     Math.max(
@@ -1138,20 +1140,12 @@ async function atualizarZoomDesktop() {
     ) + "px";
 
 
-  /*
-    Calcula a nova posição.
-  */
-
   const novoCentroX =
     proporcaoX * zoom;
 
   const novoCentroY =
     proporcaoY * zoom;
 
-
-  /*
-    CENTRALIZAÇÃO HORIZONTAL
-  */
 
   if (
     larguraHQ <=
@@ -1176,10 +1170,6 @@ async function atualizarZoomDesktop() {
 
   }
 
-
-  /*
-    POSIÇÃO VERTICAL
-  */
 
   areaLeitor.scrollTop =
     Math.max(
@@ -1260,6 +1250,122 @@ zoom100.addEventListener(
 
 
 /* =========================================================
+   DOWNLOAD DA HQ
+========================================================= */
+
+download.addEventListener(
+  "click",
+  async function() {
+
+    if (!urlPDFAtual) {
+      return;
+    }
+
+
+    try {
+
+      download.disabled = true;
+
+      download.textContent = "…";
+
+
+      /*
+        Busca o mesmo PDF que está sendo
+        utilizado pelo leitor.
+      */
+
+      const resposta =
+        await fetch(urlPDFAtual);
+
+
+      if (!resposta.ok) {
+
+        throw new Error(
+          "Não foi possível baixar o PDF."
+        );
+
+      }
+
+
+      /*
+        Converte a resposta para Blob.
+      */
+
+      const blob =
+        await resposta.blob();
+
+
+      /*
+        Cria temporariamente uma URL
+        para o arquivo.
+      */
+
+      const urlBlob =
+        URL.createObjectURL(blob);
+
+
+      /*
+        Cria o download.
+      */
+
+      const link =
+        document.createElement("a");
+
+      link.href =
+        urlBlob;
+
+      link.download =
+        nomeArquivoDownload;
+
+      document.body.appendChild(link);
+
+      link.click();
+
+      link.remove();
+
+
+      /*
+        Libera a memória depois
+        que o download foi iniciado.
+      */
+
+      setTimeout(
+        function() {
+
+          URL.revokeObjectURL(urlBlob);
+
+        },
+        1000
+      );
+
+    }
+
+    catch (erro) {
+
+      console.error(
+        "Erro ao baixar HQ:",
+        erro
+      );
+
+      alert(
+        "Não foi possível baixar a HQ."
+      );
+
+    }
+
+    finally {
+
+      download.disabled = false;
+
+      download.textContent = "⇩";
+
+    }
+
+  }
+);
+
+
+/* =========================================================
    TELA CHEIA
 ========================================================= */
 
@@ -1283,7 +1389,9 @@ fullscreen.addEventListener(
 
       }
 
-    } catch (erro) {
+    }
+
+    catch (erro) {
 
       console.error(
         "Erro ao abrir tela cheia:",
@@ -1465,45 +1573,89 @@ async function carregarPDF() {
     parametros.get("pdf");
 
 
-  let urlPDF;
-
-
-  /* GOOGLE DRIVE */
+  /* =========================
+     GOOGLE DRIVE
+  ========================= */
 
   if (id) {
 
-    urlPDF =
+    urlPDFAtual =
       "https://polished-term-e56bmega-leitor-proxy.megahqwix.workers.dev/?id="
       + encodeURIComponent(id);
 
+
+    /*
+      Como o ID do Drive não contém o nome
+      original do arquivo, usamos o ID
+      para garantir um nome válido.
+    */
+
+    nomeArquivoDownload =
+      "MegaHQ-" +
+      id +
+      ".pdf";
+
   }
 
 
-  /* ARQUIVO LOCAL DO GITHUB */
+  /* =========================
+     ARQUIVO LOCAL DO GITHUB
+  ========================= */
 
   else if (arquivo) {
 
-    urlPDF =
+    urlPDFAtual =
       arquivo;
+
+
+    /*
+      Retira possíveis parâmetros da URL
+      e pega apenas o nome do arquivo.
+    */
+
+    const nomeOriginal =
+      arquivo
+        .split("/")
+        .pop()
+        .split("?")[0];
+
+
+    nomeArquivoDownload =
+      nomeOriginal ||
+      "MegaHQ.pdf";
 
   }
 
 
-  /* PDF PADRÃO */
+  /* =========================
+     PDF PADRÃO
+  ========================= */
 
   else {
 
-    urlPDF =
+    urlPDFAtual =
+      "UBS CIDADE LUZ PREVIAS.pdf";
+
+
+    nomeArquivoDownload =
       "UBS CIDADE LUZ PREVIAS.pdf";
 
   }
+
+
+  /*
+    Agora que sabemos qual PDF será utilizado,
+    ativamos o botão de download.
+  */
+
+  download.disabled = false;
 
 
   try {
 
     pdf =
       await pdfjsLib.getDocument(
-        urlPDF
+        urlPDFAtual
       ).promise;
 
 
@@ -1517,6 +1669,9 @@ async function carregarPDF() {
       "Erro ao carregar PDF:",
       erro
     );
+
+
+    download.disabled = true;
 
 
     leitor.innerHTML = "";
