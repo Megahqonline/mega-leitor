@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+
 <meta charset="UTF-8">
 
 <meta
@@ -10,277 +12,193 @@
 
 <title>MegaHQ Online</title>
 
+<meta
+  name="admaven-placement"
+  content="BrHr6rTs4"
+>
+
 <style>
 
-* {
-  box-sizing: border-box;
+*{
+  box-sizing:border-box;
 }
 
 html,
-body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  min-height: 100%;
-  background: #111;
-  overflow-x: hidden;
+body{
+  margin:0;
+  padding:0;
+  width:100%;
+  min-height:100%;
+  background:#111;
+  overflow-x:hidden;
 }
 
-body {
-  font-family: Arial, sans-serif;
+body{
+  font-family:Arial,sans-serif;
 }
 
-/* =========================
-   BARRA SUPERIOR
-========================= */
+/* BARRA */
 
-#barra {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 55px;
-
-  background: #1c1c1c;
-  color: white;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  gap: 8px;
-
-  z-index: 1000;
-
-  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+#barra{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:55px;
+  background:#1c1c1c;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  z-index:1000;
+  box-shadow:0 2px 8px rgba(0,0,0,0.5);
 }
 
-#barra button {
-  height: 36px;
-  min-width: 36px;
-
-  border: none;
-  border-radius: 5px;
-
-  background: #333;
-  color: white;
-
-  font-size: 18px;
-
-  cursor: pointer;
+#barra button{
+  height:36px;
+  min-width:36px;
+  border:none;
+  border-radius:5px;
+  background:#333;
+  color:white;
+  font-size:18px;
+  cursor:pointer;
 }
 
-#barra button:hover {
-  background: #444;
+#barra button:hover{
+  background:#444;
 }
 
-#zoomTexto {
-  min-width: 55px;
-  text-align: center;
-  font-size: 14px;
+#zoomTexto{
+  min-width:55px;
+  text-align:center;
+  font-size:14px;
 }
 
-#fullscreen {
-  font-size: 20px;
+#fullscreen{
+  font-size:20px;
 }
 
-/* =========================
-   BOTÃO DOWNLOAD
-========================= */
-
-#download {
-  font-size: 19px;
+#download{
+  font-size:19px;
 }
 
-#download:disabled {
-  opacity: 0.5;
-  cursor: default;
+#download:disabled{
+  opacity:0.5;
+  cursor:default;
 }
 
-/* =========================
-   ÁREA DO LEITOR
-========================= */
+/* LEITOR */
 
-#areaLeitor {
-
-  margin-top: 50px;
-
-  width: 100vw;
-
-  margin-left: 0;
-
-  height: calc(100vh - 50px);
-
-  overflow: auto;
-
-  touch-action: pan-x pan-y;
-
-  -webkit-overflow-scrolling: touch;
-
-  overscroll-behavior: contain;
-
+#areaLeitor{
+  margin-top:50px;
+  width:100vw;
+  margin-left:0;
+  height:calc(100vh - 50px);
+  overflow:auto;
+  touch-action:pan-x pan-y;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
 }
 
-/* =========================
-   ÁREA INTERNA
-========================= */
-
-#mobileStage {
-
-  position: relative;
-
-  width: max-content;
-
-  min-width: 100%;
-
-  min-height: 100%;
-
+#mobileStage{
+  position:relative;
+  width:max-content;
+  min-width:100%;
+  min-height:100%;
 }
 
-/* =========================
-   LEITOR
-========================= */
-
-#leitor {
-
-  width: max-content;
-  min-width: 100%;
-
-  display: flex;
-
-  flex-direction: column;
-
-  align-items: center;
-
-  gap: 10px;
-
-  padding: 20px;
-
-  transform-origin: center top;
-
+#leitor{
+  width:max-content;
+  min-width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  padding:20px;
+  transform-origin:center top;
 }
 
-/* =========================
-   PÁGINAS
-========================= */
-
-canvas {
-
-  display: block;
-
-  max-width: none;
-
-  height: auto;
-
-  background: white;
-
-  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-
-  user-select: none;
-
-  -webkit-user-select: none;
-
-  -webkit-touch-callout: none;
-
-  image-rendering: auto;
+canvas{
+  display:block;
+  max-width:none;
+  height:auto;
+  background:white;
+  box-shadow:0 2px 8px rgba(0,0,0,0.5);
+  user-select:none;
+  -webkit-user-select:none;
+  -webkit-touch-callout:none;
+  image-rendering:auto;
 }
 
-/* =========================
-   DESKTOP
-========================= */
+/* DESKTOP */
 
-@media (min-width: 769px) {
+@media (min-width:769px){
 
-  #areaLeitor {
-    overflow: auto;
+  #areaLeitor{
+    overflow:auto;
   }
 
 }
 
-/* =========================
-   MOBILE
-========================= */
+/* CELULAR */
 
-@media (max-width: 768px) {
+@media (max-width:768px){
 
-  #barra {
-    height: 50px;
+  #barra{
+    height:50px;
   }
 
   #menosZoom,
   #maisZoom,
   #zoomTexto,
-  #zoom100 {
-    display: none;
+  #zoom100{
+    display:none;
   }
 
-  #areaLeitor {
-
-    margin-top: 50px;
-
-    width: 100vw;
-
-    margin-left: 0;
-
-    height: calc(100vh - 50px);
-
-    overflow: auto;
-
-    touch-action: pan-x pan-y;
-
-    -webkit-overflow-scrolling: touch;
-
+  #areaLeitor{
+    margin-top:50px;
+    width:100vw;
+    margin-left:0;
+    height:calc(100vh - 50px);
+    overflow:auto;
+    touch-action:pan-x pan-y;
+    -webkit-overflow-scrolling:touch;
   }
 
-  #mobileStage {
-
-    width: 100%;
-
-    min-height: 100%;
-
+  #mobileStage{
+    width:100%;
+    min-height:100%;
   }
 
-  #leitor {
-
-    padding: 0;
-
-    gap: 0;
-
-    align-items: flex-start;
-
-    min-width: 0;
-
-    width: 100%;
-
-    transform-origin: 0 0;
-
+  #leitor{
+    padding:0;
+    gap:0;
+    align-items:flex-start;
+    min-width:0;
+    width:100%;
+    transform-origin:0 0;
   }
 
-  canvas {
-
-    width: 100vw;
-
-    max-width: none;
-
-    height: auto;
-
-    box-shadow: none;
-
+  canvas{
+    width:100vw;
+    max-width:none;
+    height:auto;
+    box-shadow:none;
   }
 
 }
 
-/* =========================
-   TELA CHEIA
-========================= */
+/* TELA CHEIA */
 
-:fullscreen #barra {
-  display: flex;
+:fullscreen #barra{
+  display:flex;
 }
 
-:fullscreen #areaLeitor {
-  margin-top: 55px;
-  height: calc(100vh - 55px);
+:fullscreen #areaLeitor{
+  margin-top:55px;
+  height:calc(100vh - 55px);
 }
 
 </style>
@@ -289,13 +207,12 @@ canvas {
 
 <body>
 
-<!-- =========================
-     BARRA
-========================= -->
-
 <div id="barra">
 
-  <button id="menosZoom" title="Diminuir zoom">
+  <button
+    id="menosZoom"
+    title="Diminuir zoom"
+  >
     −
   </button>
 
@@ -303,28 +220,37 @@ canvas {
     50%
   </span>
 
-  <button id="maisZoom" title="Aumentar zoom">
+  <button
+    id="maisZoom"
+    title="Aumentar zoom"
+  >
     +
   </button>
 
-  <button id="zoom100" title="Voltar para 100%">
+  <button
+    id="zoom100"
+    title="Voltar para 100%"
+  >
     100%
   </button>
 
-  <button id="download" title="Baixar HQ" disabled>
+  <button
+    id="download"
+    title="Baixar HQ"
+    disabled
+  >
     ⇩
   </button>
 
-  <button id="fullscreen" title="Tela cheia">
+  <button
+    id="fullscreen"
+    title="Tela cheia"
+  >
     ⛶
   </button>
 
 </div>
 
-
-<!-- =========================
-     LEITOR
-========================= -->
 
 <div id="areaLeitor">
 
@@ -337,44 +263,53 @@ canvas {
 </div>
 
 
-<!-- =========================
-     PDF.JS
-========================= -->
-
 <script
   src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs"
-  type="module">
-</script>
+  type="module"
+></script>
 
 
 <script type="module">
 
-import * as pdfjsLib
-from "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs";
+import * as pdfjsLib from
+"https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs";
+
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
-  "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs";
+"https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs";
 
 
-/* =========================================================
-   ELEMENTOS
-========================================================= */
+/* ELEMENTOS */
 
-const areaLeitor = document.getElementById("areaLeitor");
-const mobileStage = document.getElementById("mobileStage");
-const leitor = document.getElementById("leitor");
+const areaLeitor =
+document.getElementById("areaLeitor");
 
-const menosZoom = document.getElementById("menosZoom");
-const maisZoom = document.getElementById("maisZoom");
-const zoomTexto = document.getElementById("zoomTexto");
-const zoom100 = document.getElementById("zoom100");
-const fullscreen = document.getElementById("fullscreen");
-const download = document.getElementById("download");
+const mobileStage =
+document.getElementById("mobileStage");
+
+const leitor =
+document.getElementById("leitor");
+
+const menosZoom =
+document.getElementById("menosZoom");
+
+const maisZoom =
+document.getElementById("maisZoom");
+
+const zoomTexto =
+document.getElementById("zoomTexto");
+
+const zoom100 =
+document.getElementById("zoom100");
+
+const fullscreen =
+document.getElementById("fullscreen");
+
+const download =
+document.getElementById("download");
 
 
-/* =========================================================
-   CONFIGURAÇÕES
-========================================================= */
+/* CONFIGURAÇÕES */
 
 let zoom = 0.5;
 
@@ -384,205 +319,170 @@ const zoomMinimo = 0.5;
 
 const zoomMaximo = 3.0;
 
-
-/* =========================================================
-   ZOOM MOBILE
-========================================================= */
-
 let mobileScale = 1;
 
 const mobileScaleMin = 1;
+
 const mobileScaleMax = 4;
 
-
-/* =========================================================
-   PDF
-========================================================= */
-
 let pdf = null;
-
-
-/* =========================================================
-   URL DO PDF ATUAL
-========================================================= */
 
 let urlPDFAtual = "";
 
 let nomeArquivoDownload = "MegaHQ.pdf";
 
 
-/* =========================================================
-   DETECTAR MOBILE
-========================================================= */
+/* MOBILE */
 
-function ehMobile() {
+function ehMobile(){
 
   return window.innerWidth <= 768;
 
 }
 
 
-/* =========================================================
-   ESCALA DESKTOP
-========================================================= */
+/* ESCALA DESKTOP */
 
-function calcularEscalaDesktop() {
+function calcularEscalaDesktop(){
 
   const larguraDisponivel =
-    window.innerWidth * 0.80;
+  window.innerWidth * 0.80;
 
   return larguraDisponivel / 1000;
 
 }
 
 
-/* =========================================================
-   RENDER DESKTOP
-========================================================= */
+/* RENDER DESKTOP */
 
-async function renderizarPaginaDesktop(page, numeroPagina) {
+async function renderizarPaginaDesktop(
+  page,
+  numeroPagina
+){
 
   const escalaBase =
-    calcularEscalaDesktop();
+  calcularEscalaDesktop();
 
   const escalaFinal =
-    escalaBase * zoom;
+  escalaBase * zoom;
 
   const viewport =
-    page.getViewport({
-      scale: escalaFinal
-    });
-
+  page.getViewport({
+    scale:escalaFinal
+  });
 
   const canvas =
-    document.createElement("canvas");
+  document.createElement("canvas");
 
   const contexto =
-    canvas.getContext("2d");
-
+  canvas.getContext("2d");
 
   const pixelRatio =
-    Math.min(
-      window.devicePixelRatio || 1,
-      2
-    );
-
+  Math.min(
+    window.devicePixelRatio || 1,
+    2
+  );
 
   canvas.width =
-    Math.floor(
-      viewport.width * pixelRatio
-    );
+  Math.floor(
+    viewport.width * pixelRatio
+  );
 
   canvas.height =
-    Math.floor(
-      viewport.height * pixelRatio
-    );
-
+  Math.floor(
+    viewport.height * pixelRatio
+  );
 
   canvas.style.width =
-    viewport.width + "px";
+  viewport.width + "px";
 
   canvas.style.height =
-    viewport.height + "px";
-
+  viewport.height + "px";
 
   await page.render({
 
-    canvasContext: contexto,
+    canvasContext:contexto,
 
-    viewport: viewport,
+    viewport:viewport,
 
     transform:
       pixelRatio !== 1
-        ? [
-            pixelRatio,
-            0,
-            0,
-            pixelRatio,
-            0,
-            0
-          ]
-        : null
+      ? [
+          pixelRatio,
+          0,
+          0,
+          pixelRatio,
+          0,
+          0
+        ]
+      : null
 
   }).promise;
-
 
   leitor.appendChild(canvas);
 
 }
 
 
-/* =========================================================
-   RENDER MOBILE
-========================================================= */
+/* RENDER MOBILE */
 
-async function renderizarPaginaMobile(page) {
+async function renderizarPaginaMobile(page){
 
   const viewportOriginal =
-    page.getViewport({
-      scale: 1
-    });
-
+  page.getViewport({
+    scale:1
+  });
 
   const larguraTela =
-    areaLeitor.clientWidth;
-
+  areaLeitor.clientWidth;
 
   const escalaVisual =
-    larguraTela /
-    viewportOriginal.width;
-
+  larguraTela /
+  viewportOriginal.width;
 
   const pixelRatio =
-    Math.min(
-      Math.max(
-        window.devicePixelRatio || 1,
-        2
-      ),
-      3
-    );
-
+  Math.min(
+    Math.max(
+      window.devicePixelRatio || 1,
+      2
+    ),
+    3
+  );
 
   const viewport =
-    page.getViewport({
-      scale: escalaVisual
-    });
-
+  page.getViewport({
+    scale:escalaVisual
+  });
 
   const canvas =
-    document.createElement("canvas");
+  document.createElement("canvas");
 
   const contexto =
-    canvas.getContext("2d");
-
+  canvas.getContext("2d");
 
   canvas.width =
-    Math.floor(
-      viewport.width *
-      pixelRatio
-    );
+  Math.floor(
+    viewport.width * pixelRatio
+  );
 
   canvas.height =
-    Math.floor(
-      viewport.height *
-      pixelRatio
-    );
-
+  Math.floor(
+    viewport.height * pixelRatio
+  );
 
   canvas.style.width =
-    viewport.width + "px";
+  viewport.width + "px";
 
   canvas.style.height =
-    viewport.height + "px";
-
+  viewport.height + "px";
 
   await page.render({
 
-    canvasContext: contexto,
+    canvasContext:contexto,
 
-    viewport: viewport,
+    viewport:viewport,
 
-    transform: [
+    transform:[
       pixelRatio,
       0,
       0,
@@ -593,44 +493,36 @@ async function renderizarPaginaMobile(page) {
 
   }).promise;
 
-
   leitor.appendChild(canvas);
 
 }
 
 
-/* =========================================================
-   RENDERIZAR TODAS AS PÁGINAS
-========================================================= */
+/* RENDER PDF */
 
-async function renderizarPDF() {
+async function renderizarPDF(){
 
-  leitor.innerHTML = "";
+  leitor.innerHTML="";
 
-  mobileStage.style.transform = "";
+  mobileStage.style.transform="";
 
-  mobileScale = 1;
+  mobileScale=1;
 
 
-  /* =========================
-     MOBILE
-  ========================= */
+  if(ehMobile()){
 
-  if (ehMobile()) {
-
-    for (
-      let i = 1;
-      i <= pdf.numPages;
+    for(
+      let i=1;
+      i<=pdf.numPages;
       i++
-    ) {
+    ){
 
       const page =
-        await pdf.getPage(i);
+      await pdf.getPage(i);
 
       await renderizarPaginaMobile(page);
 
     }
-
 
     atualizarMobileStage();
 
@@ -639,18 +531,14 @@ async function renderizarPDF() {
   }
 
 
-  /* =========================
-     DESKTOP
-  ========================= */
-
-  for (
-    let i = 1;
-    i <= pdf.numPages;
+  for(
+    let i=1;
+    i<=pdf.numPages;
     i++
-  ) {
+  ){
 
     const page =
-      await pdf.getPage(i);
+    await pdf.getPage(i);
 
     await renderizarPaginaDesktop(
       page,
@@ -660,27 +548,19 @@ async function renderizarPDF() {
   }
 
 
-  /*
-    Centraliza horizontalmente a HQ
-    depois do carregamento.
-  */
-
   const larguraHQ =
-    leitor.scrollWidth;
+  leitor.scrollWidth;
 
   const larguraTela =
-    areaLeitor.clientWidth;
+  areaLeitor.clientWidth;
 
 
-  if (larguraHQ > larguraTela) {
+  if(larguraHQ > larguraTela){
 
     areaLeitor.scrollLeft =
-      (
-        larguraHQ -
-        larguraTela
-      ) / 2;
+    (larguraHQ - larguraTela) / 2;
 
-  } else {
+  }else{
 
     areaLeitor.scrollLeft = 0;
 
@@ -689,151 +569,139 @@ async function renderizarPDF() {
 }
 
 
-/* =========================================================
-   ATUALIZAR STAGE MOBILE
-========================================================= */
+/* MOBILE STAGE */
 
-function atualizarMobileStage() {
+function atualizarMobileStage(){
 
-  if (!ehMobile()) {
-    return;
-  }
+  if(!ehMobile()) return;
 
 
   const larguraBase =
-    leitor.scrollWidth;
+  leitor.scrollWidth;
 
   const alturaBase =
-    leitor.scrollHeight;
+  leitor.scrollHeight;
 
 
   mobileStage.style.width =
-    Math.max(
-      areaLeitor.clientWidth,
-      larguraBase *
-      mobileScale
-    ) + "px";
+  Math.max(
+    areaLeitor.clientWidth,
+    larguraBase * mobileScale
+  ) + "px";
 
 
   mobileStage.style.height =
-    Math.max(
-      areaLeitor.clientHeight,
-      alturaBase *
-      mobileScale
-    ) + "px";
+  Math.max(
+    areaLeitor.clientHeight,
+    alturaBase * mobileScale
+  ) + "px";
 
 
   leitor.style.transform =
-    `scale(${mobileScale})`;
+  `scale(${mobileScale})`;
 
 }
 
 
-/* =========================================================
-   APLICAR ZOOM MOBILE
-========================================================= */
+/* ZOOM MOBILE */
 
 function aplicarZoomMobile(
   novaEscala,
   centroX,
   centroY
-) {
+){
 
   novaEscala =
-    Math.max(
-      mobileScaleMin,
-      Math.min(
-        mobileScaleMax,
-        novaEscala
-      )
-    );
+  Math.max(
+    mobileScaleMin,
+    Math.min(
+      mobileScaleMax,
+      novaEscala
+    )
+  );
 
 
   const escalaAnterior =
-    mobileScale;
+  mobileScale;
 
 
   const pontoX =
-    (
-      areaLeitor.scrollLeft +
-      centroX
-    ) / escalaAnterior;
+  (
+    areaLeitor.scrollLeft +
+    centroX
+  ) / escalaAnterior;
 
 
   const pontoY =
-    (
-      areaLeitor.scrollTop +
-      centroY
-    ) / escalaAnterior;
+  (
+    areaLeitor.scrollTop +
+    centroY
+  ) / escalaAnterior;
 
 
   mobileScale =
-    novaEscala;
+  novaEscala;
 
 
   atualizarMobileStage();
 
 
   let novoScrollX =
-    pontoX *
-    mobileScale -
-    centroX;
+  pontoX * mobileScale -
+  centroX;
 
 
   let novoScrollY =
-    pontoY *
-    mobileScale -
-    centroY;
+  pontoY * mobileScale -
+  centroY;
 
 
   const maxScrollX =
-    Math.max(
-      0,
-      areaLeitor.scrollWidth -
-      areaLeitor.clientWidth
-    );
+  Math.max(
+    0,
+    areaLeitor.scrollWidth -
+    areaLeitor.clientWidth
+  );
 
 
   const maxScrollY =
-    Math.max(
-      0,
-      areaLeitor.scrollHeight -
-      areaLeitor.clientHeight
-    );
+  Math.max(
+    0,
+    areaLeitor.scrollHeight -
+    areaLeitor.clientHeight
+  );
 
 
   novoScrollX =
-    Math.max(
-      0,
-      Math.min(
-        novoScrollX,
-        maxScrollX
-      )
-    );
+  Math.max(
+    0,
+    Math.min(
+      novoScrollX,
+      maxScrollX
+    )
+  );
 
 
   novoScrollY =
-    Math.max(
-      0,
-      Math.min(
-        novoScrollY,
-        maxScrollY
-      )
-    );
+  Math.max(
+    0,
+    Math.min(
+      novoScrollY,
+      maxScrollY
+    )
+  );
 
 
   areaLeitor.scrollLeft =
-    novoScrollX;
+  novoScrollX;
 
   areaLeitor.scrollTop =
-    novoScrollY;
+  novoScrollY;
 
 }
 
 
-/* =========================================================
-   CONTROLE DE PINCH
-========================================================= */
+/* PINCH */
 
 let pinchAtivo = false;
 
@@ -842,23 +710,18 @@ let distanciaInicial = 0;
 let escalaInicialPinch = 1;
 
 
-/* =========================================================
-   DISTÂNCIA ENTRE DOIS DEDOS
-========================================================= */
-
 function distanciaEntreDedos(
   touch1,
   touch2
-) {
+){
 
   const dx =
-    touch2.clientX -
-    touch1.clientX;
+  touch2.clientX -
+  touch1.clientX;
 
   const dy =
-    touch2.clientY -
-    touch1.clientY;
-
+  touch2.clientY -
+  touch1.clientY;
 
   return Math.sqrt(
     dx * dx +
@@ -868,14 +731,10 @@ function distanciaEntreDedos(
 }
 
 
-/* =========================================================
-   CENTRO DOS DOIS DEDOS
-========================================================= */
-
 function centroDosDedos(
   touch1,
   touch2
-) {
+){
 
   return {
 
@@ -896,67 +755,51 @@ function centroDosDedos(
 }
 
 
-/* =========================================================
-   TOUCH START
-========================================================= */
-
 areaLeitor.addEventListener(
   "touchstart",
-  function(event) {
+  function(event){
 
-    if (!ehMobile()) {
-      return;
-    }
+    if(!ehMobile()) return;
 
 
-    if (event.touches.length === 2) {
+    if(event.touches.length === 2){
 
       pinchAtivo = true;
 
-
       const t1 =
-        event.touches[0];
+      event.touches[0];
 
       const t2 =
-        event.touches[1];
-
+      event.touches[1];
 
       distanciaInicial =
-        distanciaEntreDedos(
-          t1,
-          t2
-        );
-
+      distanciaEntreDedos(
+        t1,
+        t2
+      );
 
       escalaInicialPinch =
-        mobileScale;
+      mobileScale;
 
     }
 
   },
   {
-    passive: true
+    passive:true
   }
 );
 
 
-/* =========================================================
-   TOUCH MOVE
-========================================================= */
-
 areaLeitor.addEventListener(
   "touchmove",
-  function(event) {
+  function(event){
 
-    if (!ehMobile()) {
-      return;
-    }
+    if(!ehMobile()) return;
 
-
-    if (
+    if(
       event.touches.length !== 2 ||
       !pinchAtivo
-    ) {
+    ){
 
       return;
 
@@ -967,53 +810,52 @@ areaLeitor.addEventListener(
 
 
     const t1 =
-      event.touches[0];
+    event.touches[0];
 
     const t2 =
-      event.touches[1];
+    event.touches[1];
 
 
     const distanciaAtual =
-      distanciaEntreDedos(
-        t1,
-        t2
-      );
+    distanciaEntreDedos(
+      t1,
+      t2
+    );
 
 
-    if (distanciaInicial <= 0) {
+    if(distanciaInicial <= 0)
       return;
-    }
 
 
     const fator =
-      distanciaAtual /
-      distanciaInicial;
+    distanciaAtual /
+    distanciaInicial;
 
 
     const novaEscala =
-      escalaInicialPinch *
-      fator;
+    escalaInicialPinch *
+    fator;
 
 
     const centro =
-      centroDosDedos(
-        t1,
-        t2
-      );
+    centroDosDedos(
+      t1,
+      t2
+    );
 
 
     const rect =
-      areaLeitor.getBoundingClientRect();
+    areaLeitor.getBoundingClientRect();
 
 
     const centroX =
-      centro.x -
-      rect.left;
+    centro.x -
+    rect.left;
 
 
     const centroY =
-      centro.y -
-      rect.top;
+    centro.y -
+    rect.top;
 
 
     aplicarZoomMobile(
@@ -1024,25 +866,19 @@ areaLeitor.addEventListener(
 
   },
   {
-    passive: false
+    passive:false
   }
 );
 
 
-/* =========================================================
-   TOUCH END
-========================================================= */
-
 areaLeitor.addEventListener(
   "touchend",
-  function(event) {
+  function(event){
 
-    if (!ehMobile()) {
-      return;
-    }
+    if(!ehMobile()) return;
 
 
-    if (event.touches.length < 2) {
+    if(event.touches.length < 2){
 
       pinchAtivo = false;
 
@@ -1052,18 +888,14 @@ areaLeitor.addEventListener(
 
   },
   {
-    passive: true
+    passive:true
   }
 );
 
 
-/* =========================================================
-   TOUCH CANCEL
-========================================================= */
-
 areaLeitor.addEventListener(
   "touchcancel",
-  function() {
+  function(){
 
     pinchAtivo = false;
 
@@ -1073,131 +905,121 @@ areaLeitor.addEventListener(
 );
 
 
-/* =========================================================
-   ZOOM DESKTOP
-========================================================= */
+/* ZOOM DESKTOP */
 
-async function atualizarZoomDesktop() {
+async function atualizarZoomDesktop(){
 
-  if (ehMobile()) {
-    return;
-  }
+  if(ehMobile()) return;
 
 
   const centroX =
-    areaLeitor.scrollLeft +
-    areaLeitor.clientWidth / 2;
+  areaLeitor.scrollLeft +
+  areaLeitor.clientWidth / 2;
+
 
   const centroY =
-    areaLeitor.scrollTop +
-    areaLeitor.clientHeight / 2;
+  areaLeitor.scrollTop +
+  areaLeitor.clientHeight / 2;
 
 
   const proporcaoX =
-    centroX / zoom;
+  centroX / zoom;
+
 
   const proporcaoY =
-    centroY / zoom;
+  centroY / zoom;
 
 
   zoom =
-    Math.max(
-      zoomMinimo,
-      Math.min(
-        zoomMaximo,
-        zoom
-      )
-    );
+  Math.max(
+    zoomMinimo,
+    Math.min(
+      zoomMaximo,
+      zoom
+    )
+  );
 
 
   zoomTexto.textContent =
-    Math.round(
-      zoom * 100
-    ) + "%";
+  Math.round(zoom * 100) + "%";
 
 
   await renderizarPDF();
 
 
   const larguraHQ =
-    leitor.scrollWidth;
+  leitor.scrollWidth;
 
   const alturaHQ =
-    leitor.scrollHeight;
+  leitor.scrollHeight;
 
 
   mobileStage.style.width =
-    Math.max(
-      areaLeitor.clientWidth,
-      larguraHQ
-    ) + "px";
+  Math.max(
+    areaLeitor.clientWidth,
+    larguraHQ
+  ) + "px";
 
 
   mobileStage.style.height =
-    Math.max(
-      areaLeitor.clientHeight,
-      alturaHQ
-    ) + "px";
+  Math.max(
+    areaLeitor.clientHeight,
+    alturaHQ
+  ) + "px";
 
 
   const novoCentroX =
-    proporcaoX * zoom;
+  proporcaoX * zoom;
+
 
   const novoCentroY =
-    proporcaoY * zoom;
+  proporcaoY * zoom;
 
 
-  if (
+  if(
     larguraHQ <=
     areaLeitor.clientWidth
-  ) {
+  ){
 
     areaLeitor.scrollLeft = 0;
 
-  } else {
+  }else{
 
     areaLeitor.scrollLeft =
-      Math.max(
-        0,
-        Math.min(
-          novoCentroX -
-          areaLeitor.clientWidth / 2,
-
-          areaLeitor.scrollWidth -
-          areaLeitor.clientWidth
-        )
-      );
+    Math.max(
+      0,
+      Math.min(
+        novoCentroX -
+        areaLeitor.clientWidth / 2,
+        areaLeitor.scrollWidth -
+        areaLeitor.clientWidth
+      )
+    );
 
   }
 
 
   areaLeitor.scrollTop =
-    Math.max(
-      0,
-      Math.min(
-        novoCentroY -
-        areaLeitor.clientHeight / 2,
-
-        areaLeitor.scrollHeight -
-        areaLeitor.clientHeight
-      )
-    );
+  Math.max(
+    0,
+    Math.min(
+      novoCentroY -
+      areaLeitor.clientHeight / 2,
+      areaLeitor.scrollHeight -
+      areaLeitor.clientHeight
+    )
+  );
 
 }
 
 
-/* =========================================================
-   DIMINUIR ZOOM
-========================================================= */
+/* BOTÕES DE ZOOM */
 
 menosZoom.addEventListener(
   "click",
-  function() {
+  function(){
 
-    if (ehMobile()) {
-      return;
-    }
-
+    if(ehMobile()) return;
 
     zoom -= passoZoom;
 
@@ -1207,18 +1029,11 @@ menosZoom.addEventListener(
 );
 
 
-/* =========================================================
-   AUMENTAR ZOOM
-========================================================= */
-
 maisZoom.addEventListener(
   "click",
-  function() {
+  function(){
 
-    if (ehMobile()) {
-      return;
-    }
-
+    if(ehMobile()) return;
 
     zoom += passoZoom;
 
@@ -1228,18 +1043,11 @@ maisZoom.addEventListener(
 );
 
 
-/* =========================================================
-   ZOOM 100%
-========================================================= */
-
 zoom100.addEventListener(
   "click",
-  function() {
+  function(){
 
-    if (ehMobile()) {
-      return;
-    }
-
+    if(ehMobile()) return;
 
     zoom = 1;
 
@@ -1249,149 +1057,100 @@ zoom100.addEventListener(
 );
 
 
-/* =========================================================
-   DOWNLOAD DA HQ
-========================================================= */
+/* DOWNLOAD */
 
 download.addEventListener(
   "click",
-  async function() {
+  function(){
 
-    if (!urlPDFAtual) {
+    if(!urlPDFAtual)
       return;
-    }
 
 
-    try {
+    /*
+      Para arquivos do Google Drive,
+      usamos diretamente o Worker
+      com o parâmetro download=1.
 
-      download.disabled = true;
+      Isso evita fetch + Blob,
+      que estava causando o problema.
+    */
 
-      download.textContent = "…";
+    if(
+      urlPDFAtual.includes(
+        "polished-term-e56bmega-leitor-proxy.megahqwix.workers.dev"
+      )
+    ){
 
-
-      /*
-        Busca o mesmo PDF que está sendo
-        utilizado pelo leitor.
-      */
-
-      const resposta =
-        await fetch(urlPDFAtual);
-
-
-      if (!resposta.ok) {
-
-        throw new Error(
-          "Não foi possível baixar o PDF."
+      const urlDownload =
+        urlPDFAtual +
+        "&download=1&nome=" +
+        encodeURIComponent(
+          nomeArquivoDownload
         );
 
-      }
+
+      window.location.href =
+      urlDownload;
 
 
-      /*
-        Converte a resposta para Blob.
-      */
-
-      const blob =
-        await resposta.blob();
-
-
-      /*
-        Cria temporariamente uma URL
-        para o arquivo.
-      */
-
-      const urlBlob =
-        URL.createObjectURL(blob);
-
-
-      /*
-        Cria o download.
-      */
-
-      const link =
-        document.createElement("a");
-
-      link.href =
-        urlBlob;
-
-      link.download =
-        nomeArquivoDownload;
-
-      document.body.appendChild(link);
-
-      link.click();
-
-      link.remove();
-
-
-      /*
-        Libera a memória depois
-        que o download foi iniciado.
-      */
-
-      setTimeout(
-        function() {
-
-          URL.revokeObjectURL(urlBlob);
-
-        },
-        1000
-      );
+      return;
 
     }
 
-    catch (erro) {
 
-      console.error(
-        "Erro ao baixar HQ:",
-        erro
-      );
+    /*
+      Para PDFs hospedados
+      diretamente no GitHub.
+    */
 
-      alert(
-        "Não foi possível baixar a HQ."
-      );
+    const link =
+    document.createElement("a");
 
-    }
+    link.href =
+    urlPDFAtual;
 
-    finally {
+    link.download =
+    nomeArquivoDownload;
 
-      download.disabled = false;
+    link.target =
+    "_blank";
 
-      download.textContent = "⇩";
+    document.body.appendChild(link);
 
-    }
+    link.click();
+
+    link.remove();
 
   }
 );
 
 
-/* =========================================================
-   TELA CHEIA
-========================================================= */
+/* TELA CHEIA */
 
 fullscreen.addEventListener(
   "click",
-  async function() {
+  async function(){
 
-    try {
+    try{
 
-      if (!document.fullscreenElement) {
+      if(!document.fullscreenElement){
 
         await document.documentElement.requestFullscreen();
 
-        fullscreen.textContent = "✕";
+        fullscreen.textContent =
+        "✕";
 
-      } else {
+      }else{
 
         await document.exitFullscreen();
 
-        fullscreen.textContent = "⛶";
+        fullscreen.textContent =
+        "⛶";
 
       }
 
-    }
-
-    catch (erro) {
+    }catch(erro){
 
       console.error(
         "Erro ao abrir tela cheia:",
@@ -1404,21 +1163,19 @@ fullscreen.addEventListener(
 );
 
 
-/* =========================================================
-   ESC SAIR DA TELA CHEIA
-========================================================= */
-
 document.addEventListener(
   "fullscreenchange",
-  function() {
+  function(){
 
-    if (document.fullscreenElement) {
+    if(document.fullscreenElement){
 
-      fullscreen.textContent = "✕";
+      fullscreen.textContent =
+      "✕";
 
-    } else {
+    }else{
 
-      fullscreen.textContent = "⛶";
+      fullscreen.textContent =
+      "⛶";
 
     }
 
@@ -1426,47 +1183,46 @@ document.addEventListener(
 );
 
 
-/* =========================================================
-   ARRASTAR COM MOUSE — DESKTOP
-========================================================= */
+/* ARRASTAR DESKTOP */
 
 let arrastando = false;
 
 let inicioX = 0;
+
 let inicioY = 0;
 
 let scrollInicialX = 0;
+
 let scrollInicialY = 0;
 
 
 areaLeitor.addEventListener(
   "mousedown",
-  function(event) {
+  function(event){
 
-    if (ehMobile()) {
-      return;
-    }
+    if(ehMobile()) return;
 
-
-    if (zoom <= 1) {
-      return;
-    }
+    if(zoom <= 1) return;
 
 
     arrastando = true;
 
-    inicioX = event.clientX;
-    inicioY = event.clientY;
+    inicioX =
+    event.clientX;
+
+    inicioY =
+    event.clientY;
+
 
     scrollInicialX =
-      areaLeitor.scrollLeft;
+    areaLeitor.scrollLeft;
 
     scrollInicialY =
-      areaLeitor.scrollTop;
+    areaLeitor.scrollTop;
 
 
     areaLeitor.style.cursor =
-      "grabbing";
+    "grabbing";
 
   }
 );
@@ -1474,12 +1230,12 @@ areaLeitor.addEventListener(
 
 window.addEventListener(
   "mousemove",
-  function(event) {
+  function(event){
 
-    if (
+    if(
       !arrastando ||
       ehMobile()
-    ) {
+    ){
 
       return;
 
@@ -1487,23 +1243,23 @@ window.addEventListener(
 
 
     const deslocamentoX =
-      event.clientX -
-      inicioX;
+    event.clientX -
+    inicioX;
 
 
     const deslocamentoY =
-      event.clientY -
-      inicioY;
+    event.clientY -
+    inicioY;
 
 
     areaLeitor.scrollLeft =
-      scrollInicialX -
-      deslocamentoX;
+    scrollInicialX -
+    deslocamentoX;
 
 
     areaLeitor.scrollTop =
-      scrollInicialY -
-      deslocamentoY;
+    scrollInicialY -
+    deslocamentoY;
 
   }
 );
@@ -1511,84 +1267,77 @@ window.addEventListener(
 
 window.addEventListener(
   "mouseup",
-  function() {
+  function(){
 
-    if (!arrastando) {
+    if(!arrastando)
       return;
-    }
 
 
     arrastando = false;
 
     areaLeitor.style.cursor =
-      "default";
+    "default";
 
   }
 );
 
 
-/* =========================================================
-   REDIMENSIONAMENTO DA JANELA
-========================================================= */
+/* REDIMENSIONAMENTO */
 
 let resizeTimer = null;
 
+
 window.addEventListener(
   "resize",
-  function() {
+  function(){
 
-    clearTimeout(resizeTimer);
+    clearTimeout(
+      resizeTimer
+    );
 
 
     resizeTimer =
-      setTimeout(
-        function() {
+    setTimeout(
+      function(){
 
-          renderizarPDF();
+        renderizarPDF();
 
-        },
-        250
-      );
+      },
+      250
+    );
 
   }
 );
 
 
-/* =========================================================
-   CARREGAR PDF
-========================================================= */
+/* CARREGAR PDF */
 
-async function carregarPDF() {
+async function carregarPDF(){
 
   const parametros =
-    new URLSearchParams(
-      window.location.search
-    );
+  new URLSearchParams(
+    window.location.search
+  );
 
 
   const id =
-    parametros.get("id");
+  parametros.get("id");
+
 
   const arquivo =
-    parametros.get("pdf");
+  parametros.get("pdf");
 
 
-  /* =========================
-     GOOGLE DRIVE
-  ========================= */
+  /*
+    Google Drive
+  */
 
-  if (id) {
+  if(id){
 
     urlPDFAtual =
-      "https://polished-term-e56bmega-leitor-proxy.megahqwix.workers.dev/?id="
-      + encodeURIComponent(id);
+      "https://polished-term-e56bmega-leitor-proxy.megahqwix.workers.dev/?id=" +
+      encodeURIComponent(id);
 
-
-    /*
-      Como o ID do Drive não contém o nome
-      original do arquivo, usamos o ID
-      para garantir um nome válido.
-    */
 
     nomeArquivoDownload =
       "MegaHQ-" +
@@ -1598,20 +1347,15 @@ async function carregarPDF() {
   }
 
 
-  /* =========================
-     ARQUIVO LOCAL DO GITHUB
-  ========================= */
+  /*
+    Arquivo local
+  */
 
-  else if (arquivo) {
+  else if(arquivo){
 
     urlPDFAtual =
       arquivo;
 
-
-    /*
-      Retira possíveis parâmetros da URL
-      e pega apenas o nome do arquivo.
-    */
 
     const nomeOriginal =
       arquivo
@@ -1627,11 +1371,11 @@ async function carregarPDF() {
   }
 
 
-  /* =========================
-     PDF PADRÃO
-  ========================= */
+  /*
+    Arquivo padrão
+  */
 
-  else {
+  else{
 
     urlPDFAtual =
       "UBS CIDADE LUZ PREVIAS.pdf";
@@ -1643,27 +1387,23 @@ async function carregarPDF() {
   }
 
 
-  /*
-    Agora que sabemos qual PDF será utilizado,
-    ativamos o botão de download.
-  */
-
   download.disabled = false;
 
 
-  try {
+  try{
 
     pdf =
-      await pdfjsLib.getDocument(
+      await pdfjsLib
+      .getDocument(
         urlPDFAtual
-      ).promise;
+      )
+      .promise;
 
 
     await renderizarPDF();
 
-  }
 
-  catch (erro) {
+  }catch(erro){
 
     console.error(
       "Erro ao carregar PDF:",
@@ -1678,21 +1418,25 @@ async function carregarPDF() {
 
 
     const mensagem =
-      document.createElement("div");
+    document.createElement(
+      "div"
+    );
 
 
     mensagem.style.color =
-      "white";
+    "white";
+
 
     mensagem.style.padding =
-      "30px";
+    "30px";
+
 
     mensagem.style.fontSize =
-      "18px";
+    "18px";
 
 
     mensagem.textContent =
-      "Não foi possível carregar o PDF.";
+    "Não foi possível carregar o PDF.";
 
 
     leitor.appendChild(
@@ -1704,13 +1448,12 @@ async function carregarPDF() {
 }
 
 
-/* =========================================================
-   INICIAR
-========================================================= */
+/* INICIAR */
 
 carregarPDF();
 
 </script>
 
 </body>
+
 </html>
