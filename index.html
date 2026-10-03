@@ -1067,15 +1067,6 @@ download.addEventListener(
       return;
 
 
-    /*
-      Para arquivos do Google Drive,
-      usamos diretamente o Worker
-      com o parâmetro download=1.
-
-      Isso evita fetch + Blob,
-      que estava causando o problema.
-    */
-
     if(
       urlPDFAtual.includes(
         "polished-term-e56bmega-leitor-proxy.megahqwix.workers.dev"
@@ -1084,10 +1075,7 @@ download.addEventListener(
 
       const urlDownload =
         urlPDFAtual +
-        "&download=1&nome=" +
-        encodeURIComponent(
-          nomeArquivoDownload
-        );
+        "&download=1";
 
 
       window.location.href =
@@ -1098,11 +1086,6 @@ download.addEventListener(
 
     }
 
-
-    /*
-      Para PDFs hospedados
-      diretamente no GitHub.
-    */
 
     const link =
     document.createElement("a");
@@ -1328,10 +1311,6 @@ async function carregarPDF(){
   parametros.get("pdf");
 
 
-  /*
-    Google Drive
-  */
-
   if(id){
 
     urlPDFAtual =
@@ -1346,10 +1325,6 @@ async function carregarPDF(){
 
   }
 
-
-  /*
-    Arquivo local
-  */
 
   else if(arquivo){
 
@@ -1370,10 +1345,6 @@ async function carregarPDF(){
 
   }
 
-
-  /*
-    Arquivo padrão
-  */
 
   else{
 
@@ -1453,6 +1424,15 @@ async function carregarPDF(){
 carregarPDF();
 
 </script>
+
+
+<!-- ADMAVEN - IN PAGE PUSH -->
+
+<script
+  data-cfasync="false"
+  src="//dcbbwymp1bhl.cloudfront.net/?wbbcd=1724524">
+</script>
+
 
 </body>
 
