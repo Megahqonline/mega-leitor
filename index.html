@@ -90,26 +90,21 @@ body {
 
 #areaLeitor {
 
-    margin-top: 50px;
+  margin-top: 50px;
 
-    width: 100vw;
+  width: 100vw;
 
-    margin-left: 0;
+  margin-left: 0;
 
-    height: calc(100vh - 50px);
+  height: calc(100vh - 50px);
 
-    overflow: auto;
+  overflow: auto;
 
-    /*
-      O JavaScript controla o pinch.
-      O navegador continua responsável
-      pela rolagem com um dedo.
-    */
-    touch-action: pan-x pan-y;
+  touch-action: pan-x pan-y;
 
-    -webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling: touch;
 
-    overscroll-behavior: contain;
+  overscroll-behavior: contain;
 
 }
 
@@ -121,7 +116,9 @@ body {
 
   position: relative;
 
-  width: 100%;
+  width: max-content;
+
+  min-width: 100%;
 
   min-height: 100%;
 
@@ -146,7 +143,7 @@ body {
 
   padding: 20px;
 
-  transform-origin: 0 0;
+  transform-origin: center top;
 
 }
 
@@ -216,10 +213,6 @@ canvas {
 
     overflow: auto;
 
-    /*
-      Permite rolagem normal com um dedo.
-      O pinch será tratado pelo JavaScript.
-    */
     touch-action: pan-x pan-y;
 
     -webkit-overflow-scrolling: touch;
@@ -245,6 +238,8 @@ canvas {
     min-width: 0;
 
     width: 100%;
+
+    transform-origin: 0 0;
 
   }
 
@@ -329,8 +324,10 @@ canvas {
      PDF.JS
 ========================= -->
 
-<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs"
-        type="module"></script>
+<script
+  src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs"
+  type="module">
+</script>
 
 
 <script type="module">
@@ -370,14 +367,9 @@ const zoomMinimo = 0.5;
 const zoomMaximo = 3.0;
 
 
-/*
-   Zoom específico do celular.
-
-   1 = largura normal da tela
-   2 = duas vezes
-   3 = três vezes
-   etc.
-*/
+/* =========================================================
+   ZOOM MOBILE
+========================================================= */
 
 let mobileScale = 1;
 
@@ -412,13 +404,6 @@ function calcularEscalaDesktop() {
   const larguraDisponivel =
     window.innerWidth * 0.80;
 
-  /*
-    A página original do PDF é considerada
-    aproximadamente 1000 px de largura.
-
-    Isso mantém o comportamento anterior.
-  */
-
   return larguraDisponivel / 1000;
 
 }
@@ -430,7 +415,8 @@ function calcularEscalaDesktop() {
 
 async function renderizarPaginaDesktop(page, numeroPagina) {
 
-  const escalaBase = calcularEscalaDesktop();
+  const escalaBase =
+    calcularEscalaDesktop();
 
   const escalaFinal =
     escalaBase * zoom;
@@ -448,13 +434,6 @@ async function renderizarPaginaDesktop(page, numeroPagina) {
     canvas.getContext("2d");
 
 
-  /*
-    Renderização em alta resolução.
-
-    Isso melhora bastante a qualidade sem
-    aumentar o tamanho visual da página.
-  */
-
   const pixelRatio =
     Math.min(
       window.devicePixelRatio || 1,
@@ -463,10 +442,14 @@ async function renderizarPaginaDesktop(page, numeroPagina) {
 
 
   canvas.width =
-    Math.floor(viewport.width * pixelRatio);
+    Math.floor(
+      viewport.width * pixelRatio
+    );
 
   canvas.height =
-    Math.floor(viewport.height * pixelRatio);
+    Math.floor(
+      viewport.height * pixelRatio
+    );
 
 
   canvas.style.width =
@@ -508,11 +491,6 @@ async function renderizarPaginaDesktop(page, numeroPagina) {
 
 async function renderizarPaginaMobile(page) {
 
-  /*
-    Primeiro descobrimos a largura real da página
-    sem zoom.
-  */
-
   const viewportOriginal =
     page.getViewport({
       scale: 1
@@ -523,26 +501,10 @@ async function renderizarPaginaMobile(page) {
     areaLeitor.clientWidth;
 
 
-  /*
-    Escala necessária para a página ocupar
-    exatamente a largura do celular.
-  */
-
   const escalaVisual =
-    larguraTela / viewportOriginal.width;
+    larguraTela /
+    viewportOriginal.width;
 
-
-  /*
-    IMPORTANTE:
-
-    Aqui usamos outputScale apenas para aumentar
-    a resolução REAL do canvas.
-
-    Não aumentamos o viewport novamente.
-
-    Isso evita o problema anterior de imagem
-    cortada.
-  */
 
   const pixelRatio =
     Math.min(
@@ -567,27 +529,18 @@ async function renderizarPaginaMobile(page) {
     canvas.getContext("2d");
 
 
-  /*
-    Tamanho REAL do canvas.
-  */
-
   canvas.width =
     Math.floor(
-      viewport.width * pixelRatio
+      viewport.width *
+      pixelRatio
     );
 
   canvas.height =
     Math.floor(
-      viewport.height * pixelRatio
+      viewport.height *
+      pixelRatio
     );
 
-
-  /*
-    Tamanho VISUAL.
-
-    Assim o navegador vê uma página
-    exatamente da largura do celular.
-  */
 
   canvas.style.width =
     viewport.width + "px";
@@ -632,9 +585,9 @@ async function renderizarPDF() {
   mobileScale = 1;
 
 
-  /*
-    MOBILE
-  */
+  /* =========================
+     MOBILE
+  ========================= */
 
   if (ehMobile()) {
 
@@ -652,14 +605,6 @@ async function renderizarPDF() {
     }
 
 
-    /*
-      Depois que todas as páginas foram criadas,
-      calculamos a altura natural do leitor.
-
-      Essa altura será usada para que o Stage
-      acompanhe corretamente o zoom.
-    */
-
     atualizarMobileStage();
 
     return;
@@ -667,9 +612,9 @@ async function renderizarPDF() {
   }
 
 
-  /*
-    DESKTOP
-  */
+  /* =========================
+     DESKTOP
+  ========================= */
 
   for (
     let i = 1;
@@ -687,6 +632,33 @@ async function renderizarPDF() {
 
   }
 
+
+  /*
+    Centraliza horizontalmente a HQ
+    depois do carregamento.
+  */
+
+  const larguraHQ =
+    leitor.scrollWidth;
+
+  const larguraTela =
+    areaLeitor.clientWidth;
+
+
+  if (larguraHQ > larguraTela) {
+
+    areaLeitor.scrollLeft =
+      (
+        larguraHQ -
+        larguraTela
+      ) / 2;
+
+  } else {
+
+    areaLeitor.scrollLeft = 0;
+
+  }
+
 }
 
 
@@ -701,12 +673,6 @@ function atualizarMobileStage() {
   }
 
 
-  /*
-    O leitor ainda está na escala visual 1.
-
-    Pegamos o tamanho natural dele.
-  */
-
   const larguraBase =
     leitor.scrollWidth;
 
@@ -714,34 +680,21 @@ function atualizarMobileStage() {
     leitor.scrollHeight;
 
 
-  /*
-    O Stage recebe o tamanho ampliado.
-
-    Isso é importante porque o navegador
-    precisa saber que existe conteúdo além
-    da tela para permitir o arraste.
-  */
-
   mobileStage.style.width =
     Math.max(
       areaLeitor.clientWidth,
-      larguraBase * mobileScale
+      larguraBase *
+      mobileScale
     ) + "px";
 
 
   mobileStage.style.height =
     Math.max(
       areaLeitor.clientHeight,
-      alturaBase * mobileScale
+      alturaBase *
+      mobileScale
     ) + "px";
 
-
-  /*
-    A página é ampliada visualmente.
-
-    transform-origin 0 0 significa:
-    canto superior esquerdo.
-  */
 
   leitor.style.transform =
     `scale(${mobileScale})`;
@@ -769,13 +722,6 @@ function aplicarZoomMobile(
     );
 
 
-  /*
-    Guardamos o ponto que está sendo ampliado.
-
-    Isso evita que a imagem "escape"
-    para outro lugar durante o pinch.
-  */
-
   const escalaAnterior =
     mobileScale;
 
@@ -801,18 +747,15 @@ function aplicarZoomMobile(
   atualizarMobileStage();
 
 
-  /*
-    Mantém o ponto entre os dedos
-    aproximadamente no mesmo lugar.
-  */
-
   let novoScrollX =
-    pontoX * mobileScale -
+    pontoX *
+    mobileScale -
     centroX;
 
 
   let novoScrollY =
-    pontoY * mobileScale -
+    pontoY *
+    mobileScale -
     centroY;
 
 
@@ -876,7 +819,10 @@ let escalaInicialPinch = 1;
    DISTÂNCIA ENTRE DOIS DEDOS
 ========================================================= */
 
-function distanciaEntreDedos(touch1, touch2) {
+function distanciaEntreDedos(
+  touch1,
+  touch2
+) {
 
   const dx =
     touch2.clientX -
@@ -885,6 +831,7 @@ function distanciaEntreDedos(touch1, touch2) {
   const dy =
     touch2.clientY -
     touch1.clientY;
+
 
   return Math.sqrt(
     dx * dx +
@@ -898,7 +845,10 @@ function distanciaEntreDedos(touch1, touch2) {
    CENTRO DOS DOIS DEDOS
 ========================================================= */
 
-function centroDosDedos(touch1, touch2) {
+function centroDosDedos(
+  touch1,
+  touch2
+) {
 
   return {
 
@@ -931,11 +881,6 @@ areaLeitor.addEventListener(
       return;
     }
 
-
-    /*
-      Só iniciamos o pinch quando existem
-      dois dedos.
-    */
 
     if (event.touches.length === 2) {
 
@@ -981,17 +926,6 @@ areaLeitor.addEventListener(
     }
 
 
-    /*
-      Um dedo:
-
-      NÃO fazemos nada.
-
-      O próprio navegador cuida da rolagem
-      vertical e horizontal.
-
-      Isso é o que permite arrastar a página.
-    */
-
     if (
       event.touches.length !== 2 ||
       !pinchAtivo
@@ -1001,13 +935,6 @@ areaLeitor.addEventListener(
 
     }
 
-
-    /*
-      Dois dedos:
-
-      aqui assumimos o controle para fazer
-      o zoom personalizado.
-    */
 
     event.preventDefault();
 
@@ -1115,9 +1042,6 @@ areaLeitor.addEventListener(
 
     distanciaInicial = 0;
 
-  },
-  {
-    passive: true
   }
 );
 
@@ -1132,12 +1056,9 @@ async function atualizarZoomDesktop() {
     return;
   }
 
-  /*
-    Guardamos o ponto atualmente visível.
 
-    Usamos o centro da área de leitura como
-    referência para que o usuário continue
-    olhando para a mesma região da HQ.
+  /*
+    Guardamos o centro atualmente visível.
   */
 
   const centroX =
@@ -1150,17 +1071,15 @@ async function atualizarZoomDesktop() {
 
 
   /*
-    Guardamos a posição proporcional em relação
-    ao zoom atual.
+    Guardamos a posição proporcional
+    em relação ao zoom atual.
   */
 
   const proporcaoX =
-    centroX /
-    zoom;
+    centroX / zoom;
 
   const proporcaoY =
-    centroY /
-    zoom;
+    centroY / zoom;
 
 
   /*
@@ -1191,25 +1110,87 @@ async function atualizarZoomDesktop() {
 
 
   /*
-    Depois que as páginas foram reconstruídas,
-    reposicionamos a visualização.
-
-    Assim o mesmo ponto permanece no centro.
+    Descobre o tamanho final da HQ.
   */
 
-  areaLeitor.scrollLeft =
-    Math.max(
-      0,
-      proporcaoX * zoom -
-      areaLeitor.clientWidth / 2
-    );
+  const larguraHQ =
+    leitor.scrollWidth;
 
+  const alturaHQ =
+    leitor.scrollHeight;
+
+
+  /*
+    Stage acompanha o tamanho da HQ.
+  */
+
+  mobileStage.style.width =
+    Math.max(
+      areaLeitor.clientWidth,
+      larguraHQ
+    ) + "px";
+
+
+  mobileStage.style.height =
+    Math.max(
+      areaLeitor.clientHeight,
+      alturaHQ
+    ) + "px";
+
+
+  /*
+    Calcula a nova posição.
+  */
+
+  const novoCentroX =
+    proporcaoX * zoom;
+
+  const novoCentroY =
+    proporcaoY * zoom;
+
+
+  /*
+    CENTRALIZAÇÃO HORIZONTAL
+  */
+
+  if (
+    larguraHQ <=
+    areaLeitor.clientWidth
+  ) {
+
+    areaLeitor.scrollLeft = 0;
+
+  } else {
+
+    areaLeitor.scrollLeft =
+      Math.max(
+        0,
+        Math.min(
+          novoCentroX -
+          areaLeitor.clientWidth / 2,
+
+          areaLeitor.scrollWidth -
+          areaLeitor.clientWidth
+        )
+      );
+
+  }
+
+
+  /*
+    POSIÇÃO VERTICAL
+  */
 
   areaLeitor.scrollTop =
     Math.max(
       0,
-      proporcaoY * zoom -
-      areaLeitor.clientHeight / 2
+      Math.min(
+        novoCentroY -
+        areaLeitor.clientHeight / 2,
+
+        areaLeitor.scrollHeight -
+        areaLeitor.clientHeight
+      )
     );
 
 }
@@ -1226,6 +1207,7 @@ menosZoom.addEventListener(
     if (ehMobile()) {
       return;
     }
+
 
     zoom -= passoZoom;
 
@@ -1247,6 +1229,7 @@ maisZoom.addEventListener(
       return;
     }
 
+
     zoom += passoZoom;
 
     atualizarZoomDesktop();
@@ -1266,6 +1249,7 @@ zoom100.addEventListener(
     if (ehMobile()) {
       return;
     }
+
 
     zoom = 1;
 
@@ -1355,11 +1339,6 @@ areaLeitor.addEventListener(
       return;
     }
 
-
-    /*
-      Só permite arrastar quando
-      o zoom está acima de 100%.
-    */
 
     if (zoom <= 1) {
       return;
@@ -1489,9 +1468,7 @@ async function carregarPDF() {
   let urlPDF;
 
 
-  /*
-    GOOGLE DRIVE
-  */
+  /* GOOGLE DRIVE */
 
   if (id) {
 
@@ -1502,9 +1479,7 @@ async function carregarPDF() {
   }
 
 
-  /*
-    ARQUIVO LOCAL DO GITHUB
-  */
+  /* ARQUIVO LOCAL DO GITHUB */
 
   else if (arquivo) {
 
@@ -1514,9 +1489,7 @@ async function carregarPDF() {
   }
 
 
-  /*
-    PDF PADRÃO
-  */
+  /* PDF PADRÃO */
 
   else {
 
@@ -1548,6 +1521,7 @@ async function carregarPDF() {
 
     leitor.innerHTML = "";
 
+
     const mensagem =
       document.createElement("div");
 
@@ -1560,6 +1534,7 @@ async function carregarPDF() {
 
     mensagem.style.fontSize =
       "18px";
+
 
     mensagem.textContent =
       "Não foi possível carregar o PDF.";
