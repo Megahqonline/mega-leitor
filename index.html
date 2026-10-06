@@ -241,11 +241,109 @@ body {
 
 }
 
+
+/* =========================
+   TELA DE CARREGAMENTO
+========================= */
+
+#telaCarregamento {
+  position: fixed;
+  inset: 0;
+  z-index: 100001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #111;
+  transition: opacity .25s ease, visibility .25s ease;
+}
+
+#telaCarregamento.oculta {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.carregamentoCaixa {
+  width: min(430px, calc(100% - 32px));
+  padding: 28px 26px 24px;
+  border: 1px solid #333;
+  border-radius: 14px;
+  background: #181818;
+  color: white;
+  text-align: center;
+  box-shadow: 0 12px 40px rgba(0,0,0,.35);
+}
+
+.carregamentoSpinner {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 18px;
+  border: 4px solid #3a3a3a;
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: megaSpinner .8s linear infinite;
+}
+
+@keyframes megaSpinner {
+  to { transform: rotate(360deg); }
+}
+
+#carregamentoTitulo {
+  margin: 0 0 10px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+#carregamentoMensagem {
+  margin: 0 0 18px;
+  color: #bdbdbd;
+  font-size: 14px;
+}
+
+.carregamentoBarraFundo {
+  width: 100%;
+  height: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #333;
+}
+
+#carregamentoBarra {
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background: #fff;
+  transition: width .15s ease;
+}
+
+#carregamentoPorcentagem {
+  margin-top: 9px;
+  color: #999;
+  font-size: 12px;
+}
+
 </style>
 
 </head>
 
 <body>
+
+<!-- =========================
+     TELA DE CARREGAMENTO
+========================= -->
+
+<div id="telaCarregamento">
+  <div class="carregamentoCaixa">
+    <div class="carregamentoSpinner"></div>
+    <h2 id="carregamentoTitulo">Carregando HQ...</h2>
+    <p id="carregamentoMensagem">Estamos preparando as páginas para leitura.</p>
+    <div class="carregamentoBarraFundo">
+      <div id="carregamentoBarra"></div>
+    </div>
+    <div id="carregamentoPorcentagem">0%</div>
+  </div>
+</div>
+
 
 <!-- =========================
      BARRA
@@ -370,6 +468,19 @@ const btnSairFullscreen =
 document.getElementById("btnSairFullscreen");
 
 
+const telaCarregamento =
+  document.getElementById("telaCarregamento");
+
+const carregamentoMensagem =
+  document.getElementById("carregamentoMensagem");
+
+const carregamentoBarra =
+  document.getElementById("carregamentoBarra");
+
+const carregamentoPorcentagem =
+  document.getElementById("carregamentoPorcentagem");
+
+
 /* =========================
    CONFIGURAÇÕES
 ========================= */
@@ -385,6 +496,13 @@ let zoom = 0.5;
 let pdfAtual = null;
 
 let urlPDFAtual = "";
+
+
+let nomeArquivoAtual = "";
+
+let paginasRenderizadas = 0;
+
+let totalPaginas = 0;
 
 
 /* =========================
@@ -475,29 +593,430 @@ function obterPDF() {
 
 
 /* =========================
+   CARREGAMENTO / TÍTULO
+========================= */
+
+function mostrarCarregamento(
+  percentual,
+  mensagem
+) {
+
+  telaCarregamento.classList.remove(
+    "oculta"
+  );
+
+  atualizarProgresso(
+    percentual,
+    mensagem
+  );
+}
+
+
+function atualizarProgresso(
+  percentual,
+  mensagem
+) {
+
+  const valor =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        Math.round(percentual)
+      )
+    );
+
+  carregamentoBarra.style.width =
+    valor + "%";
+
+  carregamentoPorcentagem.textContent =
+    valor + "%";
+
+  if (mensagem) {
+    carregamentoMensagem.textContent =
+      mensagem;
+  }
+
+}
+
+
+function ocultarCarregamento() {
+
+  telaCarregamento.classList.add(
+    "oculta"
+  );
+
+}
+
+
+function calcularProgressoRenderizacao() {
+
+  if (!totalPaginas) {
+    return 55;
+  }
+
+  return Math.min(
+    99,
+    55 +
+      Math.round(
+        (
+          paginasRenderizadas /
+          totalPaginas
+        ) * 44
+      )
+  );
+
+}
+
+
+function extrairIdDriveDaURL() {
+
+  const parametros =
+    new URLSearchParams(
+      window.location.search
+    );
+
+  return parametros.get("id") || "";
+}
+
+
+function extrairNomeArquivoLocal(
+  url
+) {
+
+  try {
+
+    return decodeURIComponent(
+      url
+        .split("/")
+        .pop()
+        .split("?")[0]
+    );
+
+  } catch (erro) {
+
+    return "";
+
+  }
+
+}
+
+
+/*
+  Tenta obter o nome real do arquivo pelo
+  Content-Disposition enviado pelo Worker.
+
+  Se o Worker expuser esse cabeçalho via CORS,
+  conseguimos usar exatamente o mesmo nome
+  que aparece no Google Drive.
+*/
+async function obterNomeArquivoDrive(
+  id
+) {
+
+  if (!id) {
+    return "";
+  }
+
+  const url =
+    workerURL +
+    encodeURIComponent(id);
+
+  /*
+    Tentativa 1: HEAD.
+  */
+  try {
+
+    const resposta =
+      await fetch(
+        url,
+        {
+          method: "HEAD",
+          credentials: "omit"
+        }
+      );
+
+    const nome =
+      extrairNomeDoContentDisposition(
+        resposta.headers.get(
+          "content-disposition"
+        )
+      );
+
+    if (nome) {
+      return nome;
+    }
+
+  } catch (erro) {
+    console.debug(
+      "HEAD do Worker não retornou o nome:",
+      erro
+    );
+  }
+
+  /*
+    Tentativa 2: requisição pequena por Range.
+    Não baixamos o PDF inteiro novamente.
+  */
+  try {
+
+    const controlador =
+      new AbortController();
+
+    const temporizador =
+      setTimeout(
+        () => controlador.abort(),
+        5000
+      );
+
+    const resposta =
+      await fetch(
+        url,
+        {
+          method: "GET",
+          headers: {
+            "Range": "bytes=0-0"
+          },
+          credentials: "omit",
+          signal: controlador.signal
+        }
+      );
+
+    clearTimeout(
+      temporizador
+    );
+
+    const nome =
+      extrairNomeDoContentDisposition(
+        resposta.headers.get(
+          "content-disposition"
+        )
+      );
+
+    if (nome) {
+      controlador.abort();
+      return nome;
+    }
+
+    controlador.abort();
+
+  } catch (erro) {
+    console.debug(
+      "Range do Worker não retornou o nome:",
+      erro
+    );
+  }
+
+  return "";
+
+}
+
+
+function extrairNomeDoContentDisposition(
+  valor
+) {
+
+  if (!valor) {
+    return "";
+  }
+
+  /*
+    Prioriza filename*=UTF-8''...
+  */
+  const utf8 =
+    valor.match(
+      /filename\*\s*=\s*UTF-8''([^;]+)/i
+    );
+
+  if (utf8) {
+
+    try {
+      return decodeURIComponent(
+        utf8[1].trim()
+      );
+    } catch (erro) {}
+  }
+
+  const simples =
+    valor.match(
+      /filename\s*=\s*"([^"]+)"/i
+    );
+
+  if (simples) {
+    return simples[1];
+  }
+
+  const simplesSemAspas =
+    valor.match(
+      /filename\s*=\s*([^;]+)/i
+    );
+
+  if (simplesSemAspas) {
+    return simplesSemAspas[1].trim();
+  }
+
+  return "";
+}
+
+
+function aplicarNomeArquivo(
+  nome
+) {
+
+  if (!nome) {
+    return;
+  }
+
+  nomeArquivoAtual =
+    String(nome).trim();
+
+  if (!nomeArquivoAtual) {
+    return;
+  }
+
+  /*
+    Remove apenas espaços extras nas pontas.
+    O nome do arquivo permanece exatamente como veio.
+  */
+  document.title =
+    nomeArquivoAtual;
+
+  console.log(
+    "Título da HQ:",
+    nomeArquivoAtual
+  );
+
+}
+
+
+/* =========================
    CARREGAR PDF
 ========================= */
 
 async function carregarPDF() {
 
   const dados =
-  obterPDF();
+    obterPDF();
 
   urlPDFAtual =
-  dados.url;
+    dados.url;
 
   leitor.innerHTML = "";
+
+  paginasRenderizadas = 0;
+  totalPaginas = 0;
+
+  mostrarCarregamento(
+    0,
+    "Estamos preparando as páginas para leitura."
+  );
+
+  /*
+    O título do arquivo é buscado em paralelo com o PDF.
+    Assim essa consulta não acrescenta espera perceptível
+    ao carregamento da HQ.
+  */
+  if (dados.tipo === "worker") {
+    obterNomeArquivoDrive(
+      extrairIdDriveDaURL()
+    ).then(
+      nome => {
+
+        if (!nomeArquivoAtual) {
+          aplicarNomeArquivo(
+            nome
+          );
+        }
+
+      }
+    ).catch(
+      () => {}
+    );
+  } else {
+    aplicarNomeArquivo(
+      extrairNomeArquivoLocal(dados.url)
+    );
+  }
 
   try {
 
     const loadingTask =
-    pdfjsLib.getDocument({
-      url: dados.url,
-      withCredentials: false
-    });
+      pdfjsLib.getDocument({
+        url: dados.url,
+        withCredentials: false
+      });
+
+    /*
+      Progresso real do download.
+      A barra nunca fica em 100% apenas porque o download terminou:
+      depois disso ela passa para a etapa de preparação das páginas.
+    */
+    loadingTask.onProgress = function(progresso) {
+
+      if (
+        progresso &&
+        progresso.total > 0
+      ) {
+
+        const percentualDownload =
+          Math.min(
+            50,
+            Math.round(
+              (
+                progresso.loaded /
+                progresso.total
+              ) * 50
+            )
+          );
+
+        atualizarProgresso(
+          percentualDownload,
+          "Carregando o arquivo..."
+        );
+
+      }
+
+    };
 
     pdfAtual =
-    await loadingTask.promise;
+      await loadingTask.promise;
+
+    totalPaginas =
+      pdfAtual.numPages;
+
+    /*
+      Primeiro tentamos o título gravado nos metadados
+      do próprio PDF. Isso evita qualquer requisição
+      extra e normalmente corresponde ao nome do arquivo.
+    */
+    try {
+
+      const metadata =
+        await pdfAtual.getMetadata();
+
+      const tituloPDF =
+        metadata &&
+        metadata.info &&
+        metadata.info.Title
+          ? String(
+              metadata.info.Title
+            ).trim()
+          : "";
+
+      if (tituloPDF) {
+        aplicarNomeArquivo(
+          tituloPDF
+        );
+      }
+
+    } catch (erro) {
+
+      console.debug(
+        "Não foi possível ler os metadados do PDF:",
+        erro
+      );
+
+    }
 
     console.log(
       "PDF carregado:",
@@ -505,23 +1024,49 @@ async function carregarPDF() {
       "páginas"
     );
 
-    for (
-      let numeroPagina = 1;
-      numeroPagina <= pdfAtual.numPages;
-      numeroPagina++
-    ) {
+    /*
+      PRIMEIRA PÁGINA PRIORITÁRIA:
+      ela é renderizada imediatamente.
+      Assim o usuário começa a ler sem esperar
+      todas as outras páginas terminarem.
+    */
 
-      await renderizarPagina(
-        numeroPagina
-      );
+    atualizarProgresso(
+      55,
+      "Preparando a primeira página..."
+    );
 
-    }
+    await renderizarPagina(1);
 
+    paginasRenderizadas = 1;
+
+    atualizarProgresso(
+      calcularProgressoRenderizacao(),
+      "HQ pronta para leitura."
+    );
+
+    /*
+      Libera a leitura assim que a primeira página estiver pronta.
+    */
     atualizarZoom();
+
+    ocultarCarregamento();
+
+    /*
+      As demais páginas continuam sendo renderizadas
+      em segundo plano, sem bloquear a leitura.
+    */
+    renderizarDemaisPaginasEmSegundoPlano();
 
   } catch (erro) {
 
     console.error(erro);
+
+    carregamentoMensagem.textContent =
+      "Não foi possível carregar a HQ.";
+
+    carregamentoPorcentagem.textContent =
+      "";
 
     leitor.innerHTML = `
 
@@ -547,6 +1092,86 @@ async function carregarPDF() {
     `;
 
   }
+
+}
+
+
+/* =========================
+   RENDERIZAÇÃO EM SEGUNDO PLANO
+========================= */
+
+async function renderizarDemaisPaginasEmSegundoPlano() {
+
+  /*
+    Renderiza em pequenos lotes para não travar
+    a interface do navegador.
+  */
+
+  const tamanhoLote = 3;
+
+  for (
+    let inicio = 2;
+    inicio <= totalPaginas;
+    inicio += tamanhoLote
+  ) {
+
+    const fim =
+      Math.min(
+        inicio + tamanhoLote - 1,
+        totalPaginas
+      );
+
+    const tarefas = [];
+
+    for (
+      let numeroPagina = inicio;
+      numeroPagina <= fim;
+      numeroPagina++
+    ) {
+
+      tarefas.push(
+        renderizarPagina(
+          numeroPagina
+        ).then(
+          () => {
+            paginasRenderizadas++;
+
+            const progresso =
+              calcularProgressoRenderizacao();
+
+            atualizarProgresso(
+              progresso,
+              "Carregando páginas..."
+            );
+          }
+        )
+      );
+
+    }
+
+    await Promise.all(
+      tarefas
+    );
+
+    /*
+      Pequena pausa cooperativa.
+      Permite ao navegador responder a
+      rolagem, zoom e cliques.
+    */
+    await new Promise(
+      resolver =>
+        setTimeout(
+          resolver,
+          0
+        )
+    );
+  }
+
+  atualizarZoom();
+
+  console.log(
+    "Todas as páginas foram renderizadas."
+  );
 
 }
 
